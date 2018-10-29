@@ -7,27 +7,35 @@ RM		=	rm -f
 
 NP2_PATH	= ../..
 
-CFLAGS	=	-Wall -O3 -Wstrict-overflow=0 -Wstrict-aliasing=0 -I. -I.. \
+CFLAGS	=	-Wall -O3 -Wstrict-overflow=0 -Wstrict-aliasing=0 \
+			-DUSE_MAME -DSUPPORT_SOUND_SB16 -DSUPPORT_IDEIO \
+			-DSUPPORT_LARGE_HDD -DSUPPORT_VPCVHD -DSUPPORT_KAI_IMAGES \
+			-DSUPPORT_HRTIMER  \
+			-I. -I.. \
 			-I$(NP2_PATH) \
-			-I$(NP2_PATH)/cbus \
+			-I$(NP2_PATH)/codecnv \
 			-I$(NP2_PATH)/common \
-			-I$(NP2_PATH)/embed \
-			-I$(NP2_PATH)/embed/menu \
-			-I$(NP2_PATH)/embed/menubase \
-			-I$(NP2_PATH)/generic \
 			-I$(NP2_PATH)/i286c \
-			-I$(NP2_PATH)/io \
 			-I$(NP2_PATH)/mem \
+			-I$(NP2_PATH)/io \
+			-I$(NP2_PATH)/fdd \
+			-I$(NP2_PATH)/cbus \
+			-I$(NP2_PATH)/network \
 			-I$(NP2_PATH)/sound \
 			-I$(NP2_PATH)/vram \
-			-I$(NP2_PATH)/zlib
+			-I$(NP2_PATH)/wab \
+			-I$(NP2_PATH)/generic \
+			-I$(NP2_PATH)/zlib \
+			-I$(NP2_PATH)/embed \
+			-I$(NP2_PATH)/embed/menu \
+			-I$(NP2_PATH)/embed/menubase 
 
 CFLAGS	+=	$(shell sdl2-config --cflags)
 LFLAGS	=
 
-TARGET	=	np2
+TARGET	=	np2w-sdl2
 
-CPPSRCS	=	./main.c \
+CPPSRCS	=	main.c \
 			$(NP2_PATH)/calendar.c \
 			$(NP2_PATH)/debugsub.c \
 			$(NP2_PATH)/keystat.c \
@@ -39,24 +47,56 @@ CPPSRCS	=	./main.c \
 			$(wildcard $(NP2_PATH)/cbus/*.c) \
 			$(wildcard $(NP2_PATH)/codecnv/*.c) \
 			$(wildcard $(NP2_PATH)/common/*.c) \
-			$(wildcard $(NP2_PATH)/embed/*.c) \
-			$(wildcard $(NP2_PATH)/embed/menu/*.c) \
-			$(wildcard $(NP2_PATH)/embed/menubase/*.c) \
+			$(wildcard $(NP2_PATH)/diskimage/*.c) \
+			$(wildcard $(NP2_PATH)/diskimage/fd/*.c) \
+			$(wildcard $(NP2_PATH)/diskimage/cd/*.c) \
 			$(wildcard $(NP2_PATH)/fdd/*.c) \
 			$(wildcard $(NP2_PATH)/font/*.c) \
 			$(wildcard $(NP2_PATH)/generic/*.c) \
-			$(wildcard $(NP2_PATH)/i286c/*.c) \
 			$(wildcard $(NP2_PATH)/io/*.c) \
 			$(wildcard $(NP2_PATH)/lio/*.c) \
 			$(wildcard $(NP2_PATH)/mem/*.c) \
+			$(wildcard $(NP2_PATH)/network/*.c) \
+			$(wildcard $(NP2_PATH)/sound/vermouth/*.c) \
+			$(wildcard $(NP2_PATH)/sound/getsnd/*.c) \
+			$(NP2_PATH)/sound/adpcmg.c \
+			$(NP2_PATH)/sound/adpcmc.c \
+			$(NP2_PATH)/sound/beepg.c \
+			$(NP2_PATH)/sound/beepc.c \
+			$(NP2_PATH)/sound/cs4231g.c \
+			$(NP2_PATH)/sound/cs4231c.c \
+			$(NP2_PATH)/sound/fmboard.c \
+			$(NP2_PATH)/sound/oplgeng.c \
+			$(NP2_PATH)/sound/oplgenc.c \
+			$(NP2_PATH)/sound/opngeng.c \
+			$(NP2_PATH)/sound/opngenc.c \
+			$(NP2_PATH)/sound/opna.c \
+			$(NP2_PATH)/sound/opntimer.c \
+			$(NP2_PATH)/sound/opl3.c \
+			$(NP2_PATH)/sound/pcm86g.c \
+			$(NP2_PATH)/sound/pcm86c.c \
+			$(NP2_PATH)/sound/pcmmix.c \
+			$(NP2_PATH)/sound/psggeng.c \
+			$(NP2_PATH)/sound/psggenc.c \
+			$(NP2_PATH)/sound/rhythmc.c \
+			$(NP2_PATH)/sound/s98.c \
+			$(NP2_PATH)/sound/sndcsec.c \
+			$(NP2_PATH)/sound/sound.c \
+			$(NP2_PATH)/sound/soundrom.c \
+			$(NP2_PATH)/sound/tms3631c.c \
+			$(NP2_PATH)/sound/tms3631g.c \
+			$(wildcard $(NP2_PATH)/sound/mame/*.c) \
+			$(wildcard $(NP2_PATH)/trap/*.c) \
+			$(wildcard $(NP2_PATH)/vram/*.c) \
+			$(wildcard $(NP2_PATH)/i286c/*.c) \
+			$(wildcard $(NP2_PATH)/wab/*.c) \
 			$(wildcard $(NP2_PATH)/sdl2/*.c) \
 			$(wildcard $(NP2_PATH)/sdl2/*.cpp) \
-			$(wildcard $(NP2_PATH)/sound/*.c) \
-			$(wildcard $(NP2_PATH)/sound/getsnd/*.c) \
-			$(wildcard $(NP2_PATH)/sound/vermouth/*.c) \
-			$(wildcard $(NP2_PATH)/vram/*.c) \
-			$(wildcard $(NP2_PATH)/zlib/*.c) 
-
+			$(wildcard $(NP2_PATH)/embed/*.c) \
+			$(wildcard $(NP2_PATH)/embed/menu/*.c) \
+			$(wildcard $(NP2_PATH)/embed/menubase/*.c) \
+			$(wildcard $(NP2_PATH)/zlib/*.c)
+			
 OBJS = $(addsuffix .o,$(basename $(CPPSRCS)))
 LIBS = -lm $(shell sdl2-config --libs)
 
