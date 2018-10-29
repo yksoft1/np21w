@@ -7,12 +7,16 @@
 
 #pragma once
 
+#define NP2_SDL2
+
 #include <stdio.h>
 #include <stddef.h>
 #include <setjmp.h>
 #include <SDL.h>
 
 #ifdef WIN32
+#define _WINDOWS
+#define _WIN32_WINNT 0x0500
 #include <windows.h>
 #endif
 
@@ -40,11 +44,29 @@ typedef unsigned long long	UINT64;
 #define	siglongjmp(env, val)	longjmp(env, val)
 #endif
 
+#if defined(SUPPORT_LARGE_HDD)
+typedef SINT64	FILEPOS;
+typedef SINT64	FILELEN;
+#define	NHD_MAXSIZE		8000
+#define	NHD_MAXSIZE2	32000
+#else
+typedef SINT32	FILEPOS;
+typedef SINT32	FILELEN;
+#define	NHD_MAXSIZE		2000
+#define	NHD_MAXSIZE2	2000
+#endif
+
 #define	BRESULT				UINT
 #define	OEMCHAR				char
 #define	OEMTEXT(string)		string
 #define	OEMSPRINTF			sprintf
 #define	OEMSTRLEN			strlen
+#define	_tcsicmp	strcasecmp
+#define	_tcsnicmp	strncasecmp
+#define _T
+#define _tcscpy strcpy
+#define _tcslen strlen
+
 
 #define SIZE_VGA
 #if !defined(SIZE_VGA)
@@ -113,19 +135,22 @@ typedef	unsigned char	BOOL;
 
 #define SUPPORT_NORMALDISP
 #define	SUPPORT_CRT15KHZ
-#define	SUPPORT_HOSTDRV
+//#define	SUPPORT_HOSTDRV
 #define	SUPPORT_SWSEEKSND
 #define	SUPPORT_SASI
 #define	SUPPORT_SCSI
 
+#if defined(SUPPORT_PC9821)
+#define	CPUCORE_IA32
+#define	IA32_PAGING_EACHSIZE
+#define	IA32_REBOOT_ON_PANIC
+#define	SUPPORT_CRT31KHZ
+#define	SUPPORT_PC9801_119
+#endif
+
 #if defined(CPUCORE_IA32)
 #define IA32_PAGING_EACHSIZE
 #define IA32_REBOOT_ON_PANIC
-#endif
-
-#if defined(SUPPORT_PC9821)
-#define	SUPPORT_CRT31KHZ
-#define	SUPPORT_PC9801_119
 #endif
 
 #define SUPPORT_ARC

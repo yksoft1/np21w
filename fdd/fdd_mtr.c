@@ -56,7 +56,7 @@ void fddmtrsnd_deinitialize(void) {
 	}
 }
 
-static void fddmtrsnd_play(UINT num, BOOL play) {
+/*static*/ void fddmtrsnd_play(UINT num, BOOL play) {
 
 	PMIXTRK	*trk;
 

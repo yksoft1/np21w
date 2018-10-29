@@ -4,7 +4,7 @@
 #include	"soundmng.h"
 #include	"pccore.h"
 #include	"fdd/diskdrv.h"
-#include	"fdd/fddfile.h"
+#include	"diskimage/fddfile.h"
 #include	"filesel.h"
 #include	"vramhdl.h"
 #include	"menubase.h"

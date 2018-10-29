@@ -39,3 +39,8 @@ void sysmng_update(UINT update)
 void sysmng_cpureset(void)
 {
 }
+
+void sysmng_updatecaption(UINT8 flag)
+{
+}
+
