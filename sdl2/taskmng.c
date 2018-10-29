@@ -116,7 +116,11 @@ BOOL taskmng_sleep(UINT32 tick) {
 	base = GETTICK();
 	while((task_avail) && ((GETTICK() - base) < tick)) {
 		taskmng_rol();
+#ifndef EMSCRIPTEN
 		SDL_Delay(1);
+#else
+		emscripten_sleep_with_yield(1);
+#endif
 	}
 	return(task_avail);
 }

@@ -473,4 +473,3 @@ const UINT8		*q;
 	SDL_RenderCopy(s_renderer, s_texture, NULL, NULL);
 	SDL_RenderPresent(s_renderer);
 }
-

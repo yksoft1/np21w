@@ -28,7 +28,9 @@
 #include <math.h>
 #include <float.h>
 
+#ifndef isnan
 #define isnan(x) (_isnan(x))
+#endif
 
 #include "ia32/cpu.h"
 #include "ia32/ia32.mcr"

@@ -29,6 +29,8 @@ static	UINT		framecnt;
 static	UINT		waitcnt;
 static	UINT		framemax = 1;
 
+static	char		exepath[256] = "./";
+
 static void usage(const char *progname) {
 
 	printf("Usage: %s [options]\n", progname);
@@ -108,13 +110,17 @@ static void processwait(UINT cnt) {
 	}
 }
 
+int hasbootdisk = 0;
+int hasbootdiskHDD = 0;
+char bootdisk[MAX_PATH];
+
 int np2_main(int argc, char *argv[]) {
 
-	int		pos;
+//	int		pos;
 	char	*p;
 	int		id;
 
-	pos = 1;
+/*	pos = 1;
 	while(pos < argc) {
 		p = argv[pos++];
 		if ((!milstr_cmp(p, "-h")) || (!milstr_cmp(p, "--help"))) {
@@ -125,8 +131,30 @@ int np2_main(int argc, char *argv[]) {
 			printf("error command: %s\n", p);
 			goto np2main_err1;
 		}
-	}
+	}*/
 
+#if defined (WIN32)
+	GetModuleFileNameA(NULL, exepath, MAX_PATH);
+#else
+#if !defined (USE_EMULARITY_NP2DIR)
+	strncpy(exepath, argv[0], MAX_PATH);
+#else
+	strncpy(exepath, EMSCRIPTEN_DIR, MAX_PATH);
+#endif
+#endif
+
+	if(argc > 1)
+	{
+		if(strstr(argv[1], ".hdi") || strstr(argv[1], ".HDI")) { //found HDI file
+			hasbootdiskHDD = 1;
+			hasbootdisk = 0;
+		} else {
+			hasbootdiskHDD = 0;
+			hasbootdisk = 1;
+		}
+		milstr_ncpy(bootdisk, argv[1], MAX_PATH);
+	}
+	file_setcd(exepath);
 	initload();
 
 	TRACEINIT();
@@ -164,8 +192,16 @@ int np2_main(int argc, char *argv[]) {
 		}
 	}
 
+	//Try to load floppy disk from cmdline args.
+	if(hasbootdisk)	{
+		diskdrv_setfdd(0, bootdisk, 0);
+	}
+	
 	while(taskmng_isavail()) {
 		taskmng_rol();
+#ifdef EMSCRIPTEN
+ 		emscripten_sleep_with_yield(0);
+#endif
 		if (np2oscfg.NOWAIT) {
 			pccore_exec(framecnt == 0);
 			if (np2oscfg.DRAW_SKIP) {			// nowait frame skip

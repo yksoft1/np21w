@@ -1,0 +1,146 @@
+# makefile for arm-linux
+#   gcc version 4
+
+CC		=	emcc
+RM		=	rm -f
+
+ifeq ($(EMSCRIPTEN_ROOT),)
+#Set it yourself if EMSCRIPTEN_ROOT not there
+	EMSCRIPTEN_ROOT=c:/emsdk/emscripten/1.38.12
+endif
+
+#WebAssembly seemed to be a bit faster than asm.js
+WASM=1
+
+#Set maximum RAM that Emscripten use (in bytes).
+EMSCRIPTEN_TOTAL_MEMORY=67108864
+
+SDL_CONFIG ?= $(EMSCRIPTEN_ROOT)/system/bin/sdl2-config 
+SDL_CFLAGS := $(shell $(SDL_CONFIG) --cflags) 
+SDL_LIBS := $(shell $(SDL_CONFIG) --libs)
+
+NP2_PATH	= ../..
+
+CFLAGS	=	-Wall -O3 -Wstrict-overflow=0 -Wstrict-aliasing=0 \
+			-DUSE_MAME -DSUPPORT_SOUND_SB16 -DSUPPORT_IDEIO \
+			-DSUPPORT_LARGE_HDD -DSUPPORT_VPCVHD -DSUPPORT_KAI_IMAGES \
+			-DSUPPORT_HRTIMER  \
+			-I. -I.. \
+			-I$(NP2_PATH) \
+			-I$(NP2_PATH)/codecnv \
+			-I$(NP2_PATH)/common \
+			-I$(NP2_PATH)/i286c \
+			-I$(NP2_PATH)/mem \
+			-I$(NP2_PATH)/io \
+			-I$(NP2_PATH)/fdd \
+			-I$(NP2_PATH)/cbus \
+			-I$(NP2_PATH)/network \
+			-I$(NP2_PATH)/sound \
+			-I$(NP2_PATH)/vram \
+			-I$(NP2_PATH)/wab \
+			-I$(NP2_PATH)/generic \
+			-I$(NP2_PATH)/zlib \
+			-I$(NP2_PATH)/embed \
+			-I$(NP2_PATH)/embed/menu \
+			-I$(NP2_PATH)/embed/menubase 
+
+CFLAGS	+=	$(SDL_CFLAGS)
+LFLAGS	=
+
+ifeq ($(EMULARITY), 1)
+	CFLAGS	+= -DUSE_EMULARITY_NP2DIR
+endif
+
+TARGET	=	np2w-sdl2.bc
+
+CPPSRCS	=	main.c \
+			$(NP2_PATH)/calendar.c \
+			$(NP2_PATH)/debugsub.c \
+			$(NP2_PATH)/keystat.c \
+			$(NP2_PATH)/nevent.c \
+			$(NP2_PATH)/pccore.c \
+			$(NP2_PATH)/statsave.c \
+			$(NP2_PATH)/timing.c \
+			$(wildcard $(NP2_PATH)/bios/*.c) \
+			$(wildcard $(NP2_PATH)/cbus/*.c) \
+			$(wildcard $(NP2_PATH)/codecnv/*.c) \
+			$(wildcard $(NP2_PATH)/common/*.c) \
+			$(wildcard $(NP2_PATH)/diskimage/*.c) \
+			$(wildcard $(NP2_PATH)/diskimage/fd/*.c) \
+			$(wildcard $(NP2_PATH)/diskimage/cd/*.c) \
+			$(wildcard $(NP2_PATH)/fdd/*.c) \
+			$(wildcard $(NP2_PATH)/font/*.c) \
+			$(wildcard $(NP2_PATH)/generic/*.c) \
+			$(wildcard $(NP2_PATH)/io/*.c) \
+			$(wildcard $(NP2_PATH)/lio/*.c) \
+			$(wildcard $(NP2_PATH)/mem/*.c) \
+			$(wildcard $(NP2_PATH)/network/*.c) \
+			$(wildcard $(NP2_PATH)/sound/vermouth/*.c) \
+			$(wildcard $(NP2_PATH)/sound/getsnd/*.c) \
+			$(NP2_PATH)/sound/adpcmg.c \
+			$(NP2_PATH)/sound/adpcmc.c \
+			$(NP2_PATH)/sound/beepg.c \
+			$(NP2_PATH)/sound/beepc.c \
+			$(NP2_PATH)/sound/cs4231g.c \
+			$(NP2_PATH)/sound/cs4231c.c \
+			$(NP2_PATH)/sound/fmboard.c \
+			$(NP2_PATH)/sound/oplgeng.c \
+			$(NP2_PATH)/sound/oplgenc.c \
+			$(NP2_PATH)/sound/opngeng.c \
+			$(NP2_PATH)/sound/opngenc.c \
+			$(NP2_PATH)/sound/opna.c \
+			$(NP2_PATH)/sound/opntimer.c \
+			$(NP2_PATH)/sound/opl3.c \
+			$(NP2_PATH)/sound/pcm86g.c \
+			$(NP2_PATH)/sound/pcm86c.c \
+			$(NP2_PATH)/sound/pcmmix.c \
+			$(NP2_PATH)/sound/psggeng.c \
+			$(NP2_PATH)/sound/psggenc.c \
+			$(NP2_PATH)/sound/rhythmc.c \
+			$(NP2_PATH)/sound/s98.c \
+			$(NP2_PATH)/sound/sndcsec.c \
+			$(NP2_PATH)/sound/sound.c \
+			$(NP2_PATH)/sound/soundrom.c \
+			$(NP2_PATH)/sound/tms3631c.c \
+			$(NP2_PATH)/sound/tms3631g.c \
+			$(wildcard $(NP2_PATH)/sound/mame/*.c) \
+			$(wildcard $(NP2_PATH)/trap/*.c) \
+			$(wildcard $(NP2_PATH)/vram/*.c) \
+			$(wildcard $(NP2_PATH)/i286c/*.c) \
+			$(wildcard $(NP2_PATH)/wab/*.c) \
+			$(wildcard $(NP2_PATH)/sdl2/*.c) \
+			$(wildcard $(NP2_PATH)/sdl2/*.cpp) \
+			$(wildcard $(NP2_PATH)/embed/*.c) \
+			$(wildcard $(NP2_PATH)/embed/menu/*.c) \
+			$(wildcard $(NP2_PATH)/embed/menubase/*.c) \
+			$(wildcard $(NP2_PATH)/zlib/*.c)
+			
+OBJS = $(addsuffix .o,$(basename $(CPPSRCS)))
+LIBS = -lm  $(SDL_LIBS) 
+
+.SUFFIXES: .c.o
+.SUFFIXES: .cpp.o
+
+all:	$(TARGET)
+
+$(TARGET):	$(OBJS)
+	$(CC) $(LFLAGS) -g -o $@ $(OBJS) $(LIBS)
+
+.c.o:
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+.cpp.o:
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+clean:
+	rm -f $(TARGET) $(OBJS)
+
+html: $(TARGET)
+ifeq ($(PRELOAD), 1)
+	$(CC) -O3 -s USE_SDL=2 -s WASM=$(WASM) -s TOTAL_MEMORY=$(EMSCRIPTEN_TOTAL_MEMORY)  -s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1 \
+	-s EMTERPRETIFY_WHITELIST=@em.txt $(TARGET) \
+	--preload-file $(PREFILE) -o $(basename $(TARGET)).html 
+else
+	$(CC) -O3 -s USE_SDL=2 -s WASM=$(WASM) -s TOTAL_MEMORY=$(EMSCRIPTEN_TOTAL_MEMORY)  -s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1 \
+	-s EMTERPRETIFY_WHITELIST=@em.txt $(TARGET) -o $(basename $(TARGET)).html 
+endif

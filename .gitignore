@@ -10,3 +10,6 @@
 *.html
 *.mem
 *.exe
+font.tmp
+np2.cfg
+*.ini

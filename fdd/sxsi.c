@@ -10,6 +10,18 @@
 #include	"ideio.h"
 #endif
 
+#if !defined(_WIN32)
+#include <sys/time.h>
+unsigned GetTickCount()
+{
+        struct timeval tv;
+        if(gettimeofday(&tv, NULL) != 0)
+                return 0;
+
+        return (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
+}
+#endif	/* _WIN32 */
+
 	_SXSIDEV	sxsi_dev[SASIHDD_MAX + SCSIHDD_MAX];
 
 

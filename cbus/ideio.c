@@ -1296,7 +1296,9 @@ void IOOUTCALL ideio_w16(UINT port, REG16 value) {
 	IDEDEV  dev;
 	IDEDRV	drv;
 	UINT8	*p;
-	//FILEPOS	sec;
+#if !defined(WIN32)
+	FILEPOS	sec;
+#endif
 
 	dev = getidedev();
 	drv = getidedrv();
