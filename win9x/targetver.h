@@ -11,7 +11,7 @@
 #ifndef WINVER                // Specifies that the minimum required platform is Windows 95.
 #define WINVER 0x0500         // Change this to the appropriate value to target other versions of Windows.
 #endif
-
+#ifndef __MINGW32__
 #ifndef _WIN32_WINNT          // Specifies that the minimum required platform is Windows NT4.0 SP3.
 #define _WIN32_WINNT 0x0403   // Change this to the appropriate value to target other versions of Windows.
 #endif
@@ -22,4 +22,5 @@
 
 #ifndef _WIN32_IE             // Specifies that the minimum required platform is Internet Explorer 2.0.
 #define _WIN32_IE 0x0200      // Change this to the appropriate value to target other versions of IE.
+#endif
 #endif

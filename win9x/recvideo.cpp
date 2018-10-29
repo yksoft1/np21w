@@ -7,6 +7,10 @@
 
 #if defined(SUPPORT_RECVIDEO)
 
+#ifndef comptypeDIB
+#define comptypeDIB  mmioFOURCC('D','I','B',' ')
+#endif
+
 #include "recvideo.h"
 #include "pccore.h"
 #include "iocore.h"

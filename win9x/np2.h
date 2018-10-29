@@ -26,8 +26,8 @@ typedef struct {
 	OEMCHAR	titles[256];
 	OEMCHAR	winid[4];
 
-	int		winx;
-	int		winy;
+	UINT		winx;
+	UINT		winy;
 	UINT	paddingx;
 	UINT	paddingy;
 	UINT	fscrn_cx;

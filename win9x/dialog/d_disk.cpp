@@ -502,8 +502,8 @@ protected:
 	virtual void OnOK()
 	{
 		UINT nSize = GetDlgItemInt(IDC_HDDSIZE, NULL, FALSE);
-		nSize = max(nSize, m_nHddMinSize);
-		nSize = min(nSize, m_nHddMaxSize);
+		nSize = np2max(nSize, m_nHddMinSize);
+		nSize = np2min(nSize, m_nHddMaxSize);
 		m_nHddSize = nSize;
 		CDlgProc::OnOK();
 	}
@@ -1048,7 +1048,7 @@ void dialog_newdisk_ex(HWND hWnd, int mode)
 			if (dlg2.DoModal() != IDOK)
 			{
 				_mt_cancel = 1;
-				WaitForSingleObject(newdisk_ThreadFunc, INFINITE);
+				WaitForSingleObject((HANDLE)newdisk_ThreadFunc, INFINITE);
 			}
 			_mt_cancel = 1;
 		}
@@ -1107,7 +1107,7 @@ void dialog_newdisk_ex(HWND hWnd, int mode)
 			if (dlg2.DoModal() != IDOK)
 			{
 				_mt_cancel = 1;
-				WaitForSingleObject(newdisk_ThreadFunc, INFINITE);
+				WaitForSingleObject((HANDLE)newdisk_ThreadFunc, INFINITE);
 			}
 			_mt_cancel = 1;
 		}

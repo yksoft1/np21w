@@ -374,6 +374,8 @@ static BRESULT FindSinglePath(HDRVPATH *phdp, const char *lpFcbname)
 	return (r) ? SUCCESS : FAILURE;
 }
 
+#define _countof(array) (sizeof(array) / sizeof(array[0]))
+
 /**
  * ディレクトリを得る
  * @param[out] phdp HostDrv パス

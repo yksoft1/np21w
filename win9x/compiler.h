@@ -10,7 +10,13 @@
 
 #include "targetver.h"
 #define _USE_MATH_DEFINES
+
+#ifdef __MINGW32__
+#define _WINDOWS
+#endif
+
 #include <windows.h>
+#include <tchar.h>
 /* workaround for VC6 (definition missing in the header) */
 #if (_MSC_VER + 0) <= 1200
 # ifdef __cplusplus
@@ -21,14 +27,31 @@ WINBASEAPI BOOL WINAPI SetFilePointerEx(HANDLE, LARGE_INTEGER, PLARGE_INTEGER, D
 }
 # endif
 #endif
-#if !defined(__GNUC__)
+#if !defined(__GNUC__) && !defined(__MINGW32__)
 #include <tchar.h>
 #endif	// !defined(__GNUC__)
 #include <stdio.h>
+#include <ctype.h>
+#include <math.h>
 #include <stddef.h>
 #include <setjmp.h>
 #if defined(TRACE)
 #include <assert.h>
+#endif
+
+#define	sigjmp_buf				jmp_buf
+#ifndef	sigsetjmp
+#define	sigsetjmp(env, mask)	setjmp(env)
+#endif
+#ifndef	siglongjmp
+#define	siglongjmp(env, val)	longjmp(env, val)
+#endif
+
+#ifndef	np2max
+#define	np2max(a,b)	(((a) > (b)) ? (a) : (b))
+#endif
+#ifndef	np2min
+#define	np2min(a,b)	(((a) < (b)) ? (a) : (b))
 #endif
 
 #ifndef _T
@@ -43,7 +66,7 @@ WINBASEAPI BOOL WINAPI SetFilePointerEx(HANDLE, LARGE_INTEGER, PLARGE_INTEGER, D
 #endif
 #define	OSLINEBREAK_CRLF
 
-#if !defined(__GNUC__)
+#if !defined(__GNUC__) && !defined(__MINGW32__)
 typedef	signed int			SINT;
 typedef	signed char			SINT8;
 typedef	unsigned char		UINT8;
@@ -61,8 +84,10 @@ typedef	unsigned __int64	UINT64;
 #else
 #include <stdlib.h>
 typedef	signed int			SINT;
+typedef	signed char			INT8;
 typedef	signed char			SINT8;
 typedef	unsigned char		UINT8;
+typedef	signed short		INT16;
 typedef	signed short		SINT16;
 typedef	unsigned short		UINT16;
 typedef	signed int			SINT32;
@@ -129,7 +154,6 @@ typedef	signed __int64		SINT64;
 #define	OPNGENX86
 #endif
 
-#define	VERMOUTH_LIB
 #define	MT32SOUND_DLL
 #define	PARTSCALL	__fastcall
 #define	CPUCALL		__fastcall
@@ -189,8 +213,11 @@ typedef	signed __int64		SINT64;
 
 #define SOUND_CRITICAL
 #define	SOUNDRESERVE	20
+#ifndef __MINGW32__
 #define SUPPORT_VSTi
 #define SUPPORT_ASIO
+#define	VERMOUTH_LIB
+#endif
 #if (_MSC_VER >= 1500)
 #define SUPPORT_WASAPI
 #endif	/* (_MSC_VER >= 1500) */

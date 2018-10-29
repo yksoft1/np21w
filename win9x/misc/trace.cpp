@@ -6,7 +6,6 @@
 #include "compiler.h"
 #include <stdarg.h>
 #include <string>
-#include <atlbase.h>
 #include "resource.h"
 #include "WndProc.h"
 #include "strres.h"
@@ -17,6 +16,7 @@
 
 #ifdef TRACE
 
+#include <atlbase.h>
 #define	VIEW_FGCOLOR	0x000000
 #define	VIEW_BGCOLOR	0xffffff
 #define	VIEW_TEXT		"ÇlÇr ÉSÉVÉbÉN"

@@ -11,7 +11,7 @@
 // Win2000‚Å“®‚­‚æ‚¤‚É‚·‚é
 #if defined(SUPPORT_WIN2000HOST)
 #ifdef _WINDOWS
-#ifndef _WIN64
+#if !defined (_WIN64) && !defined (__MINGW32__) 
 #define WINVER2 0x0500
 #include "commonfix.h"
 #endif
@@ -71,7 +71,7 @@
 #include "bmpdata.h"
 #include "vram/scrnsave.h"
 #include "fdd/sxsi.h"
-#if !defined(_WIN64)
+#if !defined(_WIN64) && !defined (__MINGW32__)
 #include "cputype.h"
 #endif
 #if defined(SUPPORT_DCLOCK)
@@ -2766,7 +2766,7 @@ void loadNP2INI(const OEMCHAR *fname){
 	szClassName[1] = (TCHAR)np2oscfg.winid[1];
 	szClassName[2] = (TCHAR)np2oscfg.winid[2];
 	
-#if !defined(_WIN64)
+#if !defined(_WIN64) && !defined (__MINGW32__)
 	mmxflag = (havemmx())?0:MMXFLAG_NOTSUPPORT;
 	mmxflag += (np2oscfg.disablemmx)?MMXFLAG_DISABLE:0;
 #endif
@@ -3005,7 +3005,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	
 #if defined(SUPPORT_WIN2000HOST)
 #ifdef _WINDOWS
-#ifndef _WIN64
+#if !defined (_WIN64) && !defined (__MINGW32__) 
 #define WINVER2 0x0500
 	initialize_findacx();
 #endif
@@ -3068,7 +3068,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	g_hInstance = hInstance = LoadExternalResource(hInstance);
 	CWndProc::SetResourceHandle(hInstance);
 
-#if !defined(_WIN64)
+#if !defined(_WIN64) && !defined (__MINGW32__)
 	mmxflag = (havemmx())?0:MMXFLAG_NOTSUPPORT;
 	mmxflag += (np2oscfg.disablemmx)?MMXFLAG_DISABLE:0;
 #endif
