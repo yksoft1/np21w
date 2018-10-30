@@ -123,6 +123,9 @@ typedef struct {
 const OEMCHAR	*title;
 const OEMCHAR	*filter;
 const OEMCHAR	*ext;
+#ifdef EMSCRIPTEN
+int drv;
+#endif
 } FSELPRM;
 
 typedef struct {
@@ -132,6 +135,9 @@ typedef struct {
 const OEMCHAR	*filter;
 const OEMCHAR	*ext;
 	OEMCHAR		path[MAX_PATH];
+#ifdef EMSCRIPTEN
+	int drv;
+#endif
 } FILESEL;
 
 static	FILESEL		filesel;
@@ -248,6 +254,51 @@ static void dlgsetlist(void) {
 	}
 }
 
+#if defined(WIN32)
+static void dlgsetdrvlist(void) {
+
+	LISTARRAY	flist;
+	FLISTH		flh;
+	FLINFO		fli;
+	BOOL		append;
+	FLIST		fl;
+	ITEMEXPRM	prm;
+	UINT32		drives;
+	UINT		d;
+
+	menudlg_itemreset(DID_FLIST);
+	menudlg_settext(DID_FOLDER, "Drives");
+	listarray_destroy(filesel.flist);
+	flist = listarray_new(sizeof(_FLIST), 64);
+	filesel.flist = flist;
+	filesel.fbase = NULL;
+	drives = GetLogicalDrives();
+	for(d = 0; d < 26; d++) {
+		append = FALSE;
+		if ((drives & (1 << d)) != 0) {
+			append = TRUE;
+		}
+		if (append) {
+			sprintf(fli.path, "%c:", 'A' + d);
+			fli.attr = 0x10;
+			if (fappend(flist, &fli) != SUCCESS) {
+				break;
+			}
+		}
+	}
+	prm.pos = 0;
+	fl = filesel.fbase;
+	while(fl) {
+		menudlg_itemappend(DID_FLIST, NULL);
+		prm.icon = (fl->isdir)?MICON_FOLDER:MICON_FILE;
+		prm.str = fl->name;
+		menudlg_itemsetex(DID_FLIST, &prm);
+		fl = fl->next;
+		prm.pos++;
+	}
+}
+#endif
+
 static void dlginit(void) {
 
 	menudlg_appends(res_fs, NELEMENTS(res_fs));
@@ -301,6 +352,10 @@ static int dlgcmd(int msg, MENUID id, long param) {
 			switch(id) {
 				case DID_OK:
 					if (dlgupdate()) {
+#if defined (EMSCRIPTEN)
+						if(filesel.drv>=0xff)diskdrv_setsxsi(filesel.drv-0xff,filesel.path);
+						else diskdrv_setfdd(filesel.drv, filesel.path, 0);
+#endif
 						menubase_close();
 					}
 					break;
@@ -312,7 +367,14 @@ static int dlgcmd(int msg, MENUID id, long param) {
 				case DID_PARENT:
 					file_cutname(filesel.path);
 					file_cutseparator(filesel.path);
+#if defined(WIN32)
+					if(filesel.path[0] == '\0')
+						dlgsetdrvlist();
+					else
+						dlgsetlist();
+#else
 					dlgsetlist();
+#endif
 					menudlg_settext(DID_FILE, NULL);
 					break;
 
@@ -340,8 +402,13 @@ static int dlgcmd(int msg, MENUID id, long param) {
 	return(0);
 }
 
+#if defined (EMSCRIPTEN)
+static BOOL selectfile(const FSELPRM *prm, OEMCHAR *path, int size, 
+														const OEMCHAR *def,int drv) {
+#else
 static BOOL selectfile(const FSELPRM *prm, OEMCHAR *path, int size, 
 														const OEMCHAR *def) {
+#endif
 
 const OEMCHAR	*title;
 
@@ -360,9 +427,14 @@ const OEMCHAR	*title;
 		title = prm->title;
 		filesel.filter = prm->filter;
 		filesel.ext = prm->ext;
+#if defined (EMSCRIPTEN)
+		filesel.drv = drv;
+#endif
 	}
 	menudlg_create(DLGFS_WIDTH, DLGFS_HEIGHT, title, dlgcmd);
+#if !defined (EMSCRIPTEN)
 	menubase_modalproc();
+#endif
 	soundmng_play();
 	if (filesel.result) {
 		file_cpyname(path, filesel.path, size);
@@ -396,7 +468,11 @@ void filesel_fdd(REG8 drv) {
 	OEMCHAR	path[MAX_PATH];
 
 	if (drv < 4) {
+#if defined (EMSCRIPTEN)
+		if (selectfile(&fddprm, path, NELEMENTS(path), fdd_diskname(drv),drv)) {
+#else
 		if (selectfile(&fddprm, path, NELEMENTS(path), fdd_diskname(drv))) {
+#endif
 			diskdrv_setfdd(drv, path, 0);
 		}
 	}
@@ -426,7 +502,11 @@ const FSELPRM	*prm;
 		}
 	}
 #endif
+#if defined (EMSCRIPTEN)
+	if ((prm) && (selectfile(prm, path, NELEMENTS(path), p,drv+0xff))) {
+#else
 	if ((prm) && (selectfile(prm, path, NELEMENTS(path), p))) {
+#endif
 		diskdrv_setsxsi(drv, path);
 	}
 }
