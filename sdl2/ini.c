@@ -361,6 +361,11 @@ static const INITBL iniitem[] = {
 	{"F12_bind", INITYPE_UINT8,		&np2oscfg.F12KEY,		0},
 	{"e_resume", INITYPE_BOOL,		&np2oscfg.resume,		0},
 	{"jast_snd", INITYPE_BOOL,		&np2oscfg.jastsnd,		0},		// ver0.73
+	
+	//for NP21W
+	{"timerfix", INITYPE_BOOL,		&np2cfg.timerfix, 0},
+	{"winNTfix", INITYPE_BOOL,		&np2cfg.winntfix, 0},
+	{"memchkmx", INITYPE_UINT8,		&np2cfg.memchkmx, 0},
 };
 
 #define	INIITEMS	(sizeof(iniitem) / sizeof(INITBL))

@@ -342,6 +342,31 @@ static void sys_cmd(MENUID id) {
 			np2cfg.EXTMEM = 7;
 			update |= SYS_UPDATECFG;
 			break;
+			
+		case MID_MEM136:
+			np2cfg.EXTMEM = 13;
+			update |= SYS_UPDATECFG;
+			break;
+
+		case MID_MEM166:
+			np2cfg.EXTMEM = 16;
+			update |= SYS_UPDATECFG;
+			break;
+
+		case MID_MEM326:
+			np2cfg.EXTMEM = 32;
+			update |= SYS_UPDATECFG;
+			break;
+
+		case MID_MEM646:
+			np2cfg.EXTMEM = 64;
+			update |= SYS_UPDATECFG;
+			break;
+
+		case MID_MEM1286:
+			np2cfg.EXTMEM = 128;
+			update |= SYS_UPDATECFG;
+			break;
 #if 0
 		case IDM_MOUSE:
 			mousemng_toggle(MOUSEPROC_SYSTEM);
@@ -422,6 +447,34 @@ static void sys_cmd(MENUID id) {
 			update |= SYS_UPDATECFG;
 			break;
 
+		case MID_MMTIMERFIX:
+			np2cfg.timerfix ^= 1;
+			update |= SYS_UPDATECFG;
+			break;
+
+		case MID_WINNTIDEFIX:
+			np2cfg.winntfix ^= 1;
+			update |= SYS_UPDATECFG;
+			break;
+			
+		case IDM_SENDCAD:
+			keystat_senddata(0x73);
+			keystat_senddata(0x74);
+			keystat_senddata(0x39);
+			keystat_senddata(0x73 | 0x80);
+			keystat_senddata(0x74 | 0x80);
+			keystat_senddata(0x39 | 0x80);
+			break;
+			
+		case MID_SKIP16MEMCHK:
+			if(np2cfg.memchkmx != 0){
+				np2cfg.memchkmx = 0;
+			}else{
+				np2cfg.memchkmx = 15;
+			}
+			update |= SYS_UPDATECFG;
+			break;	
+		
 		case MID_ABOUT:
 			menudlg_create(DLGABOUT_WIDTH, DLGABOUT_HEIGHT,
 											(char *)mstr_about, dlgabout_cmd);
@@ -518,9 +571,18 @@ BRESULT sysmenu_menuopen(UINT menutype, int x, int y) {
 	menusys_setcheck(MID_MEM16, (b == 1));
 	menusys_setcheck(MID_MEM36, (b == 3));
 	menusys_setcheck(MID_MEM76, (b == 7));
+	menusys_setcheck(MID_MEM136, (b == 13));
+	menusys_setcheck(MID_MEM166, (b == 16));
+	menusys_setcheck(MID_MEM326, (b == 32));
+	menusys_setcheck(MID_MEM646, (b == 64));
+	menusys_setcheck(MID_MEM1286, (b == 128));
 	menusys_setcheck(MID_JOYX, (np2cfg.BTN_MODE & 1));
 	menusys_setcheck(MID_RAPID, (np2cfg.BTN_RAPID & 1));
 	menusys_setcheck(MID_MSRAPID, (np2cfg.MOUSERAPID & 1));
+	menusys_setcheck(MID_MMTIMERFIX, (np2cfg.timerfix & 1));
+	menusys_setcheck(MID_WINNTIDEFIX, (np2cfg.winntfix & 1));
+	menusys_setcheck(MID_SKIP16MEMCHK, (np2cfg.memchkmx == 15));
+	
 	return(menusys_open(x, y));
 }
 

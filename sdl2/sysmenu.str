@@ -72,6 +72,11 @@ static const char str_mem640[] = "640KB";
 static const char str_mem16[] = "1.6MB";
 static const char str_mem36[] = "3.6MB";
 static const char str_mem76[] = "7.6MB";
+static const char str_mem136[] = "13.6MB";
+static const char str_mem166[] = "16.6MB";
+static const char str_mem326[] = "32.6MB";
+static const char str_mem646[] = "64.6MB";
+static const char str_mem1286[] = "128.6MB";
 
 static const char str_mouse[] = "Mouse";
 static const char str_seropt[] = "Serial option...";
@@ -92,6 +97,11 @@ static const char str_joyrev[] = "Joy Reverse";
 static const char str_joyrapid[] = "Joy Rapid";
 static const char str_mouserapid[] = "Mouse Rapid";
 static const char str_about[] = "About...";
+
+static const char str_mmtimerfix[] = "MMTimer Fix";
+static const char str_winntfix[] = "WinNT4/2000 IDE Fix";
+static const char str_sendcad[] = "Send CTRL+GRPH+DEL";
+static const char str_skip16memchk[] = "Skip 16MB+ MemChk";
 
 static const MSYSITEM s_emu[] = {
 		{str_reset,			NULL,		MID_RESET,			0},
@@ -224,7 +234,13 @@ static const MSYSITEM s_mem[] = {
 		{str_mem640,		NULL,		MID_MEM640,			0},
 		{str_mem16,			NULL,		MID_MEM16,			0},
 		{str_mem36,			NULL,		MID_MEM36,			0},
-		{str_mem76,			NULL,		MID_MEM76,			MENU_DELETED}};
+		{str_mem76,			NULL,		MID_MEM76,			0},
+		{str_mem136,		NULL,		MID_MEM136,			0},
+		{str_mem166,		NULL,		MID_MEM166,			0},
+		{str_mem326,		NULL,		MID_MEM326,			0},
+		{str_mem646,		NULL,		MID_MEM646,			0},
+		{str_mem1286,		NULL,		MID_MEM1286,		MENU_DELETED}
+		};
 
 static const MSYSITEM s_device[] = {
 		{str_keyboard,		s_keybd,	MID_STATIC,			0},
@@ -237,6 +253,10 @@ static const MSYSITEM s_device[] = {
 		{NULL,				NULL,		MID_STATIC,			MENU_SEPARATOR},
 		{str_midiopt,		NULL,		MID_MPUPC98,		MENU_GRAY},
 		{str_midipanic,		NULL,		MID_MIDIPANIC,		0},
+		{NULL,				NULL,		MID_STATIC,			MENU_SEPARATOR},
+		{str_mmtimerfix,	NULL,		MID_MMTIMERFIX,	 	0},
+		{str_winntfix,		NULL,		MID_WINNTIDEFIX,	 	0},
+		{str_sendcad,		NULL,		IDM_SENDCAD,	 	0},
 		{NULL,				NULL,		MID_STATIC,			MENU_SEPARATOR},
 		{str_sndopt,		NULL,		MID_SNDOPT,			MENU_GRAY |
 															MENU_DELETED}};
@@ -255,6 +275,7 @@ static const MSYSITEM s_other[] = {
 		{str_joyrev,		NULL,		MID_JOYX,			0},
 		{str_joyrapid,		NULL,		MID_RAPID,			0},
 		{str_mouserapid,	NULL,		MID_MSRAPID,		MENU_GRAY},
+		{str_skip16memchk,	NULL,		MID_SKIP16MEMCHK,		0},
 		{NULL,				NULL,		MID_STATIC,			MENU_SEPARATOR},
 		{str_about,			NULL,		MID_ABOUT,			MENU_DELETED}};
 
