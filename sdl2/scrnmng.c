@@ -26,11 +26,16 @@ typedef struct {
 	int		height;
 } SCRNSTAT;
 
-static const char app_name[] = "Neko Project II";
+#ifndef SUPPORT_PC9821
+static const char app_name[] = "Neko Project II/W";
+#else
+static const char app_name[] = "Neko Project 21/W";	
+#endif
 
 static	SCRNMNG		scrnmng;
 static	SCRNSTAT	scrnstat;
 static	SCRNSURF	scrnsurf;
+static  SCRNMENU 	*tmpsmenu;
 
 typedef struct {
 	int		xalign;
@@ -41,6 +46,8 @@ typedef struct {
 	int		dstpos;
 } DRAWRECT;
 
+static void draw_onmenu(void);
+
 static BRESULT calcdrawrect(SDL_Surface *surface,
 								DRAWRECT *dr, VRAMHDL s, const RECT_T *rt) {
 
@@ -50,8 +57,8 @@ static BRESULT calcdrawrect(SDL_Surface *surface,
 	dr->yalign = surface->pitch;
 	dr->srcpos = 0;
 	dr->dstpos = 0;
-	dr->width = min(scrnmng.width, s->width);
-	dr->height = min(scrnmng.height, s->height);
+	dr->width = max(scrnmng.width, s->width);
+	dr->height = max(scrnmng.height, s->height);
 	if (rt) {
 		pos = max(rt->left, 0);
 		dr->srcpos += pos;
@@ -153,14 +160,46 @@ RGB16 scrnmng_makepal16(RGB32 pal32) {
 	return(ret);
 }
 
-void scrnmng_setwidth(int posx, int width) {
+void menubase_close(void);
 
+void scrnmng_setwidth(int posx, int width) {
+	//menu may CRASH at switching resolution
+	if (menuvram != NULL) {
+ 		menubase_close();
+	}
+	
+ 	SDL_FreeSurface(s_surface);
+ 	SDL_DestroyTexture(s_texture);
+ 	
+ 	SDL_RenderSetLogicalSize(s_renderer, width, scrnmng.height);
+ 	s_texture = SDL_CreateTexture(s_renderer, SDL_PIXELFORMAT_RGB565, SDL_TEXTUREACCESS_STATIC, width, scrnmng.height);
+ 	s_surface = SDL_CreateRGBSurface(SDL_SWSURFACE, width, scrnmng.height, 16, 0xf800, 0x07e0, 0x001f, 0);
 	scrnstat.width = width;
+	scrnmng.width = width;
+ 	
+ 	SDL_SetWindowSize(s_sdlWindow, width, scrnmng.height);
+
+	scrndraw_redraw();
 }
 
 void scrnmng_setheight(int posy, int height) {
-
+	//menu may CRASH at switching resolution	
+	if (menuvram != NULL) {
+ 		menubase_close();
+	}
+	
+ 	SDL_FreeSurface(s_surface);
+ 	SDL_DestroyTexture(s_texture);
+ 	
+ 	SDL_RenderSetLogicalSize(s_renderer, scrnstat.width, height);
+ 	s_texture = SDL_CreateTexture(s_renderer, SDL_PIXELFORMAT_RGB565, SDL_TEXTUREACCESS_STATIC, scrnstat.width, height);
+ 	s_surface = SDL_CreateRGBSurface(SDL_SWSURFACE, scrnstat.width, height, 16, 0xf800, 0x07e0, 0x001f, 0);
 	scrnstat.height = height;
+	scrnmng.height = height;
+ 	
+ 	SDL_SetWindowSize(s_sdlWindow, scrnstat.width, height);
+
+	scrndraw_redraw();
 }
 
 const SCRNSURF *scrnmng_surflock(void) {
@@ -185,8 +224,8 @@ const SCRNSURF *scrnmng_surflock(void) {
 		scrnsurf.yalign = scrnmng.vram->yalign;
 		scrnsurf.bpp = scrnmng.vram->bpp;
 	}
-	scrnsurf.width = min(scrnstat.width, 640);
-	scrnsurf.height = min(scrnstat.height, 400);
+	scrnsurf.width = max(scrnstat.width, 640);
+	scrnsurf.height = max(scrnstat.height, 400);
 	scrnsurf.extend = 0;
 	return(&scrnsurf);
 }
@@ -327,6 +366,7 @@ BRESULT scrnmng_entermenu(SCRNMENU *smenu) {
 	if (smenu == NULL) {
 		goto smem_err;
 	}
+	tmpsmenu = smenu;
 	vram_destroy(scrnmng.vram);
 	scrnmng.vram = vram_create(scrnmng.width, scrnmng.height, FALSE,
 																scrnmng.bpp);
