@@ -24,7 +24,7 @@ NP2_PATH	= ../..
 CFLAGS	=	-Wall -O3 -Wstrict-overflow=0 -Wstrict-aliasing=0 \
 			-DUSE_MAME -DSUPPORT_SOUND_SB16 -DSUPPORT_IDEIO \
 			-DSUPPORT_LARGE_HDD -DSUPPORT_VPCVHD -DSUPPORT_KAI_IMAGES \
-			-DSUPPORT_HRTIMER  \
+			-DSUPPORT_HRTIMER -DNDEBUG \
 			-I. -I.. \
 			-I$(NP2_PATH) \
 			-I$(NP2_PATH)/codecnv \
