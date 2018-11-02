@@ -108,8 +108,8 @@ static void getscreensize(int *screenwidth, int *screenheight, UINT scrnmode){
 	int			multiple;
 	
 	if (scrnmode & SCRNMODE_FULLSCREEN) {
-		width = min(scrnstat.width, d3d.width);
-		height = min(scrnstat.height, d3d.height);
+		width = np2min(scrnstat.width, d3d.width);
+		height = np2min(scrnstat.height, d3d.height);
 
 		scrnwidth = width;
 		scrnheight = height;
@@ -122,7 +122,7 @@ static void getscreensize(int *screenwidth, int *screenheight, UINT scrnmode){
 			case FSCRNMOD_ASPECTFIX8:
 				scrnwidth = (d3d.width << 3) / width;
 				scrnheight = (d3d.height << 3) / height;
-				multiple = min(scrnwidth, scrnheight);
+				multiple = np2min(scrnwidth, scrnheight);
 				scrnwidth = (width * multiple) >> 3;
 				scrnheight = (height * multiple) >> 3;
 				break;
@@ -161,8 +161,8 @@ static void getscreensize(int *screenwidth, int *screenheight, UINT scrnmode){
 				break;
 		}
 	}else{
-		width = min(scrnstat.width, d3d.width);
-		height = min(scrnstat.height, d3d.height);
+		width = np2min(scrnstat.width, d3d.width);
+		height = np2min(scrnstat.height, d3d.height);
 
 		multiple = scrnstat.multiple;
 		fscrnmod = np2oscfg.fscrnmod & FSCRNMOD_ASPECTMASK;
@@ -209,8 +209,8 @@ static void renewalclientsize(BOOL winloc) {
 	int			tmpcy;
 	WINLOCEX	wlex;
 
-	width = min(scrnstat.width, d3d.width);
-	height = min(scrnstat.height, d3d.height);
+	width = np2min(scrnstat.width, d3d.width);
+	height = np2min(scrnstat.height, d3d.height);
 
 	extend = 0;
 
@@ -221,7 +221,7 @@ static void renewalclientsize(BOOL winloc) {
 		getscreensize(&scrnwidth, &scrnheight, d3d.scrnmode);
 		fscrnmod = np2oscfg.fscrnmod & FSCRNMOD_ASPECTMASK;
 		if(fscrnmod==FSCRNMOD_ASPECTFIX8) {
-			multiple = min(width, height);
+			multiple = np2min(width, height);
 		}
 		d3d.scrn.left = (d3d.width - scrnwidth) / 2;
 		d3d.scrn.top = (d3d.height - scrnheight) / 2;
@@ -238,7 +238,7 @@ static void renewalclientsize(BOOL winloc) {
 				switch(fscrnmod) {
 					default:
 					case FSCRNMOD_NORESIZE:
-						tmpcy = min(tmpcy, height);
+						tmpcy = np2min(tmpcy, height);
 						d3d.rectclip.bottom = tmpcy;
 						break;
 
@@ -271,7 +271,7 @@ static void renewalclientsize(BOOL winloc) {
 		getscreensize(&scrnwidth, &scrnheight, d3d.scrnmode);
 		if (!(d3d.scrnmode & SCRNMODE_ROTATE)) {
 			if ((np2oscfg.paddingx) && (multiple == 8)) {
-				extend = min(scrnstat.extend, d3d.extend);
+				extend = np2min(scrnstat.extend, d3d.extend);
 			}
 			d3d.rect.right = width + extend;
 			d3d.rect.bottom = height;
@@ -280,7 +280,7 @@ static void renewalclientsize(BOOL winloc) {
 		}
 		else {
 			if ((np2oscfg.paddingy) && (multiple == 8)) {
-				extend = min(scrnstat.extend, d3d.extend);
+				extend = np2min(scrnstat.extend, d3d.extend);
 			}
 			d3d.rect.right = height;
 			d3d.rect.bottom = width + extend;
@@ -348,8 +348,8 @@ static void clearoutofrect(const RECT *target, const RECT *base) {
 		rectd3dc++;
 	}
 
-	rect.top = max(base->top, target->top);
-	rect.bottom = min(base->bottom, target->bottom);
+	rect.top = np2max(base->top, target->top);
+	rect.bottom = np2min(base->bottom, target->bottom);
 	if (rect.top < rect.bottom) {
 		rect.left = base->left;
 		rect.right = target->left;
@@ -442,8 +442,8 @@ static void update_backbuffer2size(){
 	if(current_d3d_imode == D3D_IMODE_PIXEL || current_d3d_imode == D3D_IMODE_PIXEL2 || current_d3d_imode == D3D_IMODE_PIXEL3){
 		UINT backbufwidth = d3d.d3dparam.BackBufferWidth - scrnstat.extend * 2;
 		UINT backbufheight = d3d.d3dparam.BackBufferHeight;
-		d3d.backsurf2width = max(scrnstat.width, 320);
-		d3d.backsurf2height = max(scrnstat.height, 200);
+		d3d.backsurf2width = np2max(scrnstat.width, 320);
+		d3d.backsurf2height = np2max(scrnstat.height, 200);
 		d3d.backsurf2mul = 1;
 		switch(current_d3d_imode){
 		case D3D_IMODE_PIXEL3:
@@ -542,7 +542,9 @@ static void restoresurfaces() {
 			//scrnmngD3D_destroy();
 			//scrnmngD3D_create(g_scrnmode);
 			devicelostflag = 0;
+#ifdef SUPPORT_WAB
 			mt_wabpausedrawing = 0;
+#endif
 			d3d_leave_criticalsection();
 			scrnmngD3D_updatefsres();
 			scrndraw_updateallline();
@@ -1479,9 +1481,9 @@ void scrnmngD3D_entersizing(void) {
 	scrnsizing.by = (np2oscfg.paddingy * 2) +
 					(rectwindow.bottom - rectwindow.top) -
 					(rectclient.bottom - rectclient.top);
-	cx = min(scrnstat.width, d3d.width);
+	cx = np2min(scrnstat.width, d3d.width);
 	cx = (cx + 7) >> 3;
-	cy = min(scrnstat.height, d3d.height);
+	cy = np2min(scrnstat.height, d3d.height);
 	cy = (cy + 7) >> 3;
 	if (!(d3d.scrnmode & SCRNMODE_ROTATE)) {
 		scrnsizing.cx = cx;
@@ -1515,7 +1517,7 @@ void scrnmngD3D_sizing(UINT side, RECT *rect) {
 	else {
 		height = mul_max;
 	}
-	mul = min(width, height);
+	mul = np2min(width, height);
 	if (mul <= 0) {
 		mul = 1;
 	}

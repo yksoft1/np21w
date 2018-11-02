@@ -10,7 +10,8 @@ RM		=	rm -f
 NP2_PATH	= ../..
 
 CFLAGS	=	-O3 -fno-tree-vectorize -Wstrict-overflow=0 -Wstrict-aliasing=0 -Wno-narrowing -DNDEBUG \
-			-DSUPPORT_LARGE_HDD -DSUPPORT_VPCVHD -DSUPPORT_KAI_IMAGES \
+			-DSUPPORT_LARGE_HDD -DSUPPORT_VPCVHD -DSUPPORT_KAI_IMAGES -DSUPPORT_SCRN_DIRECT3D \
+			-DSUPPORT_WAB -DSUPPORT_IDEIO \
 			-I. -I.. \
 			-I$(NP2_PATH) \
 			-I$(NP2_PATH)/codecnv \
@@ -37,7 +38,7 @@ CXXFLAGS = -std=gnu++0x $(CFLAGS)
 #CFLAGS	+=	$(shell sdl2-config --cflags)
 LFLAGS	= -static -mwindows
 
-TARGET	=	np2.exe
+TARGET	=	np2w.exe
 
 CPPSRCS	=	$(NP2_PATH)/calendar.c \
 			$(NP2_PATH)/debugsub.c \
@@ -116,7 +117,7 @@ CPPSRCS	=	$(NP2_PATH)/calendar.c \
 			$(wildcard $(NP2_PATH)/zlib/*.c)
 
 OBJS = $(addsuffix .o,$(basename $(CPPSRCS)))
-LIBS =  -lstdc++ -lm -lcomctl32 -lcomdlg32 -lwinmm -ldxguid -lddraw -ldsound -lavifil32 -lvfw32 -ldinput8 -luuid -lole32 -lshlwapi
+LIBS =  -lstdc++ -lm -lcomctl32 -lcomdlg32 -lwinmm -ldxguid -lddraw -ldsound -lavifil32 -lvfw32 -ldinput8 -luuid -lole32 -lshlwapi -ld3d9
 
 .SUFFIXES: .c.o
 .SUFFIXES: .cpp.o

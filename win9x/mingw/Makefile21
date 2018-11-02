@@ -15,7 +15,7 @@ CFLAGS	=	-O3  -fno-tree-vectorize -Wstrict-overflow=0 -Wstrict-aliasing=0 -DNDEB
 			-DSUPPORT_WAB -DSUPPORT_CL_GD5430 \
 			-DUSE_MAME -DSUPPORT_SOUND_SB16 -DSUPPORT_IDEIO -DSUPPORT_PCI \
 			-DSUPPORT_LARGE_HDD -DSUPPORT_VPCVHD -DSUPPORT_KAI_IMAGES \
-			-DSUPPORT_HRTIMER  \
+			-DSUPPORT_HRTIMER -DSUPPORT_SCRN_DIRECT3D \
 			-I. -I.. \
 			-I$(NP2_PATH) \
 			-I$(NP2_PATH)/codecnv \
@@ -142,7 +142,7 @@ CPPSRCS	=	$(NP2_PATH)/calendar.c \
 			$(wildcard $(NP2_PATH)/zlib/*.c)
 
 OBJS = $(addsuffix .o,$(basename $(CPPSRCS)))
-LIBS =  -lstdc++ -lm -lcomctl32 -lcomdlg32 -lwinmm -ldxguid -lddraw -ldsound -lavifil32 -lvfw32 -ldinput8 -luuid -lole32 -lshlwapi
+LIBS =  -lstdc++ -lm -lcomctl32 -lcomdlg32 -lwinmm -ldxguid -lddraw -ldsound -lavifil32 -lvfw32 -ldinput8 -luuid -lole32 -lshlwapi -ld3d9
 
 .SUFFIXES: .c.o
 .SUFFIXES: .cpp.o
