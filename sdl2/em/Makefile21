@@ -24,7 +24,7 @@ NP2_PATH	= ../..
 CFLAGS	=	-Wall -O3 -Wstrict-overflow=0 -Wstrict-aliasing=0 \
 			-DSUPPORT_PC9821 -DSUPPORT_FPU_DOSBOX -DSUPPORT_FPU_DOSBOX2 -DSUPPORT_FPU_SOFTFLOAT \
 			-DSUPPORT_GPIB -DUSE_FPU -DUSE_MMX -DUSE_3DNOW -DUSE_SSE -DUSE_SSE2 -DUSE_SSE3 -DUSE_TSC \
-			-DUSE_MAME -DSUPPORT_SOUND_SB16 -DSUPPORT_IDEIO \
+			-DUSE_MAME -DSUPPORT_SOUND_SB16 -DSUPPORT_IDEIO -DSUPPORT_PCI \
 			-DSUPPORT_LARGE_HDD -DSUPPORT_VPCVHD -DSUPPORT_KAI_IMAGES \
 			-DSUPPORT_HRTIMER -DNDEBUG \
 			-I. -I.. \
@@ -77,6 +77,7 @@ CPPSRCS	=	main.c \
 			$(wildcard $(NP2_PATH)/font/*.c) \
 			$(wildcard $(NP2_PATH)/generic/*.c) \
 			$(wildcard $(NP2_PATH)/io/*.c) \
+			$(wildcard $(NP2_PATH)/io/pci/*.c) \
 			$(wildcard $(NP2_PATH)/lio/*.c) \
 			$(wildcard $(NP2_PATH)/mem/*.c) \
 			$(wildcard $(NP2_PATH)/network/*.c) \
