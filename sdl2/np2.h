@@ -2,6 +2,7 @@
 typedef struct {
 	UINT8	NOWAIT;
 	UINT8	DRAW_SKIP;
+	UINT8	KEYBOARD;
 	UINT8	F12KEY;
 	UINT8	resume;
 	UINT8	jastsnd;

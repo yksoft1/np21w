@@ -5,7 +5,7 @@
 #include	"dosio.h"
 #include	"ini.h"
 #include	"pccore.h"
-
+#include	"sdlkbd.h"
 
 typedef struct {
 const char		*title;
@@ -54,10 +54,31 @@ static void inirdarg8(UINT8 *dst, int dsize, const char *src) {
 	}
 }
 
+static void
+inirdkb(const char *src, INITBL *ini)
+{
+
+	if ((!milstr_extendcmp(src, "DOS"))
+	 || (!milstr_cmp(src, "JIS"))
+	 || (!milstr_cmp(src, "106"))
+	 || (!milstr_cmp(src, "JP"))
+	 || (!milstr_cmp(src, "PCAT"))
+	 || (!milstr_cmp(src, "AT"))) {
+		*(UINT8 *)ini->value = KEY_KEY106;
+	} else if ((!milstr_extendcmp(src, "KEY101"))
+	        || (!milstr_cmp(src, "ASCII"))
+	        || (!milstr_cmp(src, "EN"))
+	        || (!milstr_cmp(src, "US"))
+	        || (!milstr_cmp(src, "101"))) {
+		*(UINT8 *)ini->value = KEY_KEY101;
+	}
+}
+
 static BRESULT inireadcb(void *arg, const char *para,
 										const char *key, const char *data) {
 
 const INITBL	*p;
+char work[512];
 
 	if (arg == NULL) {
 		return(FAILURE);
@@ -106,6 +127,11 @@ const INITBL	*p;
 
 				case INITYPE_HEX32:
 					*((UINT32 *)p->value) = (UINT32)milstr_solveHEX(data);
+					break;
+					
+				case INITYPE_KB:
+					milstr_ncpy(work, data, 512);
+					inirdkb(work, p);
 					break;
 			}
 		}
@@ -271,7 +297,14 @@ const INITBL	*pterm;
 			case INITYPE_HEX32:
 				SPRINTF(work, str_x, *((UINT32 *)p->value));
 				break;
-
+				
+			case INITYPE_KB:
+				if (*(UINT8 *)p->value == KEY_KEY101)
+					milstr_ncpy(work, "101", sizeof(work));
+				else
+					milstr_ncpy(work, "106", sizeof(work));
+				break;
+					
 			default:
 				set = FAILURE;
 				break;
@@ -373,6 +406,9 @@ static const INITBL iniitem[] = {
 	{"timerfix", INITYPE_BOOL,		&np2cfg.timerfix, 0},
 	{"winNTfix", INITYPE_BOOL,		&np2cfg.winntfix, 0},
 	{"memchkmx", INITYPE_UINT8,		&np2cfg.memchkmx, 0},
+	
+	//for NP2kai keyboard
+	{"keyboard", INITYPE_KB,		&np2oscfg.KEYBOARD,	0}
 };
 
 #define	INIITEMS	(sizeof(iniitem) / sizeof(INITBL))

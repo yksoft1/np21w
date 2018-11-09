@@ -25,7 +25,7 @@
 #include	"sysmenu.h"
 
 
-		NP2OSCFG	np2oscfg = {0, 0, 0, 0, 0};
+		NP2OSCFG	np2oscfg = {0, KEY_KEY106, 0, 0, 0, 0};
 static	UINT		framecnt;
 static	UINT		waitcnt;
 static	UINT		framemax = 1;

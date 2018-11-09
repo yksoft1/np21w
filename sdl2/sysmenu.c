@@ -223,6 +223,16 @@ static void sys_cmd(MENUID id) {
 			update |= SYS_UPDATEOSCFG;
 			break;
 
+		case MID_KEYBOARD_106:
+			np2oscfg.KEYBOARD = KEY_KEY106;
+			update |= SYS_UPDATEOSCFG;
+			break;
+
+		case MID_KEYBOARD_101:
+			np2oscfg.KEYBOARD = KEY_KEY101;
+			update |= SYS_UPDATEOSCFG;
+			break;
+			
 		case MID_BEEPOFF:
 			np2cfg.BEEP_VOL = 0;
 			beep_setvol(0);
@@ -531,6 +541,9 @@ BRESULT sysmenu_menuopen(UINT menutype, int x, int y) {
 	menusys_setcheck(MID_30FPS, (b == 2));
 	menusys_setcheck(MID_20FPS, (b == 3));
 	menusys_setcheck(MID_15FPS, (b == 4));
+	b = np2oscfg.KEYBOARD;
+	menusys_setcheck(MID_KEYBOARD_106, (b == KEY_KEY106));
+	menusys_setcheck(MID_KEYBOARD_101, (b == KEY_KEY101));
 	b = np2cfg.KEY_MODE;
 	menusys_setcheck(MID_KEY, (b == 0));
 	menusys_setcheck(MID_JOY1, (b == 1));

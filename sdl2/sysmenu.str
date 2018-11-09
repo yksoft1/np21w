@@ -44,6 +44,8 @@ static const char str_f12copy[] = "F12 = Copy";
 static const char str_f12stop[] = "F12 = Stop";
 static const char str_f12equ[] = "F12 = tenkey [=]";
 static const char str_f12comma[] = "F12 = tenkey [ , ]";
+static const char str_keyboard_106[] = "JP Keyboard 106";
+static const char str_keyboard_101[] = "US Keyboard 101";
 
 static const char str_beep[] = "Beep";
 static const char str_off[] = "off";
@@ -192,6 +194,9 @@ static const MSYSITEM s_screen[] = {
 		{str_scropt,		NULL,		MID_SCREENOPT,		MENU_DELETED}};
 
 static const MSYSITEM s_keybd[] = {
+		{str_keyboard_106,	NULL,		MID_KEYBOARD_106,		0},
+		{str_keyboard_101,	NULL,		MID_KEYBOARD_101,		0},
+		{NULL,			NULL,		MID_STATIC,			MENU_SEPARATOR},
 		{str_keyboard,		NULL,		MID_KEY,			0},
 		{str_joykey1,		NULL,		MID_JOY1,			0},
 		{str_joykey2,		NULL,		MID_JOY2,			0},
