@@ -8,6 +8,10 @@
 #define HAS_Y8950  1
 #define HAS_YMF262 1
 
+#if defined(EMSCRIPTEN)
+#define INLINE static
+typedef signed short stream_sample_t;
+#else
 #if defined(_MSC_VER)
 #pragma warning(disable: 4244)
 #pragma warning(disable: 4245)
@@ -18,6 +22,7 @@
 #define INLINE __inline__
 #else
 #define INLINE static
+#endif
 #endif
 
 #define logerror(x,y,z)

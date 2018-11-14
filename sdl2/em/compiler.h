@@ -10,6 +10,7 @@
 #define NP2_SDL2
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <stddef.h>
 #include <setjmp.h>
 #include <SDL.h>
