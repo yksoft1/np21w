@@ -45,7 +45,7 @@ CFLAGS	=	-O3  -fno-tree-vectorize -Wstrict-overflow=0 -Wstrict-aliasing=0 -DNDEB
 
 #CFLAGS += -DSUPPORT_NET -DSUPPORT_LGY98 -D_WINDOWS \
 
-CXXFLAGS = -Wno-narrowing  -std=gnu++0x  $(CFLAGS)
+CXXFLAGS = -Wno-narrowing -fpermissive -std=gnu++0x  $(CFLAGS)
 
 #CFLAGS	+=	$(shell sdl2-config --cflags)
 LFLAGS	= -static -mwindows
