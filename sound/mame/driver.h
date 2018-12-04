@@ -18,7 +18,7 @@ typedef signed short stream_sample_t;
 #define INLINE __inline static
 #elif defined(__BORLANDC__)
 #define INLINE __inline
-#elif defined(__GNUC__)
+#elif defined(__GNUC__) && !defined (__MINGW64__)
 #define INLINE __inline__
 #else
 #define INLINE static
