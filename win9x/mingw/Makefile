@@ -33,7 +33,7 @@ CFLAGS	=	-O3 -fno-tree-vectorize -Wstrict-overflow=0 -Wstrict-aliasing=0 -Wno-na
 			-I$(NP2_PATH)/win9x/ext/romeo \
 			-I$(NP2_PATH)/win9x/ext/scci 
 
-CXXFLAGS = -std=gnu++0x $(CFLAGS)
+CXXFLAGS = -std=gnu++0x -fpermissive $(CFLAGS)
 
 #CFLAGS	+=	$(shell sdl2-config --cflags)
 LFLAGS	= -static -mwindows
