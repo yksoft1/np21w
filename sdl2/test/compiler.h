@@ -36,6 +36,38 @@ typedef	unsigned int		UINT32;
 typedef signed long long	SINT64;
 typedef unsigned long long	UINT64;
 
+#ifndef INT
+#define INT UINT32
+#endif
+
+#ifndef BYTE
+#define BYTE unsigned char
+#endif
+
+#ifndef DWORD
+#define DWORD SINT32
+#endif
+
+#ifndef WORD
+#define WORD SINT16
+#endif
+
+#ifndef INT8
+#define INT8 char
+#endif
+
+#ifndef INT16
+#define INT16 SINT16
+#endif
+
+#ifndef INT32
+#define INT32 SINT32
+#endif
+
+#ifndef INT64
+#define INT64 SINT64
+#endif
+
 #define	sigjmp_buf				jmp_buf
 #ifndef	sigsetjmp
 #define	sigsetjmp(env, mask)	setjmp(env)
@@ -123,14 +155,16 @@ typedef	unsigned char	BOOL;
 #define	STRLEN				strlen
 
 #define	VERMOUTH_LIB
-#define	SOUND_CRITICAL
 
 #define	SUPPORT_UTF8
 
 #define	SUPPORT_16BPP
 #define	MEMOPTIMIZE		2
 
+#ifdef WIN32
 #define SOUND_CRITICAL
+#endif
+
 #define	SOUNDRESERVE	100
 
 #define SUPPORT_NORMALDISP
@@ -157,6 +191,10 @@ typedef	unsigned char	BOOL;
 #define SUPPORT_ZLIB
 
 #define	SCREEN_BPP		16
+
+#if !defined(__i386__) && !defined(__x86_64__)
+#define __fastcall
+#endif
 
 #ifndef WIN32
 #define	FASTCALL

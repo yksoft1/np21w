@@ -3,10 +3,10 @@
 
 #define	MAX_FDDFILE		4							// ver0.31
 
-#include	"DiskImage/FD/fdd_head_d88.h"
-#include	"DiskImage/FD/fdd_head_dcp.h"	//	’Ç‰Á(Kai1)
-#include	"DiskImage/FD/fdd_head_nfd.h"	//	’Ç‰Á(Kai1)
-#include	"DiskImage/FD/fdd_head_vfdd.h"	//	’Ç‰Á(Kai1)
+#include	"diskimage/fd/fdd_head_d88.h"
+#include	"diskimage/fd/fdd_head_dcp.h"	//	’Ç‰Á(Kai1)
+#include	"diskimage/fd/fdd_head_nfd.h"	//	’Ç‰Á(Kai1)
+#include	"diskimage/fd/fdd_head_vfdd.h"	//	’Ç‰Á(Kai1)
 
 enum {
 	FDDFILE_MF			= 0x80,

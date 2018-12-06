@@ -13,13 +13,13 @@
 #endif
 
 #ifdef SUPPORT_KAI_IMAGES
-#include	"DiskImage/cddfile.h"
-#include	"DiskImage/CD/cdd_iso.h"
-#include	"DiskImage/CD/cdd_cue.h"
-#include	"DiskImage/CD/cdd_ccd.h"
-#include	"DiskImage/CD/cdd_mds.h"
-#include	"DiskImage/CD/cdd_nrg.h"
-#include	"DiskImage/CD/cdd_real.h"
+#include	"diskimage/cddfile.h"
+#include	"diskimage/cd/cdd_iso.h"
+#include	"diskimage/cd/cdd_cue.h"
+#include	"diskimage/cd/cdd_ccd.h"
+#include	"diskimage/cd/cdd_mds.h"
+#include	"diskimage/cd/cdd_nrg.h"
+#include	"diskimage/cd/cdd_real.h"
 
 BRESULT sxsicd_open(SXSIDEV sxsi, const OEMCHAR *fname) {
 
