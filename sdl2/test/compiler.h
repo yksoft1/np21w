@@ -88,6 +88,12 @@ typedef SINT32	FILELEN;
 #define	NHD_MAXSIZE2	2000
 #endif
 
+#if defined(SUPPORT_LARGE_MEMORY)
+#define	MEMORY_MAXSIZE		4000
+#else
+#define	MEMORY_MAXSIZE		230
+#endif
+
 #define	BRESULT				UINT
 #define	OEMCHAR				char
 #define	OEMTEXT(string)		string

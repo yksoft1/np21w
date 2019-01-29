@@ -573,6 +573,9 @@ void atapi_dataread(IDEDRV drv) {
 #else
 void atapi_dataread(IDEDRV drv) {
 
+	SXSIDEV	sxsi;
+	sxsi = sxsi_getptr(drv->sxsidrv);
+	
 	// ƒGƒ‰[ˆ—–Ú’ƒ‹ê’ƒ`
 	if (drv->nsectors == 0) {
 		sendabort(drv);
