@@ -406,6 +406,7 @@ static const INITBL iniitem[] = {
 	{"timerfix", INITYPE_BOOL,		&np2cfg.timerfix, 0},
 	{"winNTfix", INITYPE_BOOL,		&np2cfg.winntfix, 0},
 	{"memchkmx", INITYPE_UINT8,		&np2cfg.memchkmx, 0},
+	{"usePEGCPlane", INITYPE_BOOL,		&np2cfg.usepegcplane, 0},
 	
 	//for NP2kai keyboard
 	{"keyboard", INITYPE_KB,		&np2oscfg.KEYBOARD,	0}

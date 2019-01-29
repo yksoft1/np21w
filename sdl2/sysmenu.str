@@ -104,6 +104,7 @@ static const char str_mmtimerfix[] = "MMTimer Fix";
 static const char str_winntfix[] = "WinNT4/2000 IDE Fix";
 static const char str_sendcad[] = "Send CTRL+GRPH+DEL";
 static const char str_skip16memchk[] = "Skip 16MB+ MemChk";
+static const char str_usepegcplane[] = "PEGC linear mode";
 
 static const MSYSITEM s_emu[] = {
 		{str_reset,			NULL,		MID_RESET,			0},
@@ -191,6 +192,9 @@ static const MSYSITEM s_screen[] = {
 		{str_20fps,			NULL,		MID_20FPS,			0},
 		{str_15fps,			NULL,		MID_15FPS,			0},
 		{NULL,				NULL,		MID_STATIC,			MENU_SEPARATOR},
+#if defined(SUPPORT_PEGC)
+		{str_usepegcplane,			NULL,		MID_USEPEGCPLANE,			0},
+#endif
 		{str_scropt,		NULL,		MID_SCREENOPT,		MENU_DELETED}};
 
 static const MSYSITEM s_keybd[] = {

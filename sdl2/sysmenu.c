@@ -484,7 +484,14 @@ static void sys_cmd(MENUID id) {
 			}
 			update |= SYS_UPDATECFG;
 			break;	
-		
+
+#if defined(SUPPORT_PEGC)
+		case MID_USEPEGCPLANE:
+			np2cfg.usepegcplane ^= 1;
+			update |= SYS_UPDATECFG;
+			break;
+#endif
+			
 		case MID_ABOUT:
 			menudlg_create(DLGABOUT_WIDTH, DLGABOUT_HEIGHT,
 											(char *)mstr_about, dlgabout_cmd);
@@ -595,7 +602,10 @@ BRESULT sysmenu_menuopen(UINT menutype, int x, int y) {
 	menusys_setcheck(MID_MMTIMERFIX, (np2cfg.timerfix & 1));
 	menusys_setcheck(MID_WINNTIDEFIX, (np2cfg.winntfix & 1));
 	menusys_setcheck(MID_SKIP16MEMCHK, (np2cfg.memchkmx == 15));
-	
+#if defined(SUPPORT_PEGC)	
+	menusys_setcheck(MID_USEPEGCPLANE, (np2cfg.usepegcplane & 1));
+#endif
+
 	return(menusys_open(x, y));
 }
 
