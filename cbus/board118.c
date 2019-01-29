@@ -73,9 +73,17 @@ static void IOOUTCALL sb16_o29d2(UINT port, REG8 dat) {
 }
 
 static REG8 IOINPCALL sb16_i20d2(UINT port) {
-	(void)port;
-	if(g_opl.reg[0x4] == 1) return 0x02;
-	return YMF262Read(opl3, 0);
+	
+	REG8 ret;
+	ret = YMF262Read(opl3, 0);
+	////if(g_opl.reg[0x4] == 1) return 0x02;
+	////if(g_opl.reg[0x4] == 1){
+	//	if ((cs4231.reg.pinctrl & IEN) && (cs4231.dmairq != 0xff)) {
+	//		if(cs4231.intflag & INt){
+	//		}
+	//	}
+	////}
+	return ret;
 }
 
 static REG8 IOINPCALL sb16_i22d2(UINT port) {
@@ -149,8 +157,12 @@ static void IOOUTCALL ymf_o18e(UINT port, REG8 dat)
 
 static REG8 IOINPCALL ymf_i188(UINT port)
 {
-	(void)port;
-	return g_opna[opna_idx].s.status;
+	REG8 ret;
+	ret = g_opna[opna_idx].s.status;
+	if((cs4231.reg.pinctrl & IEN) && (cs4231.reg.featurestatus & (PI|TI|CI))) {
+		ret |= 0x02;
+	}
+	return ret;
 }
 
 static REG8 IOINPCALL ymf_i18a(UINT port)
@@ -338,6 +350,7 @@ REG8 control118;
 static REG8 IOINPCALL csctrl_i148f(UINT port) {
 	TRACEOUT(("%x read",port));
 	(void)port;
+	//if(sound118 == 0)	return(0xf0);//PC-9801-118は3だけどYMFは0xff 2000はこれだけじゃまだダメ
 	if(sound118 == 0)	return(0xf3);//PC-9801-118は3だけどYMFは0xff 2000はこれだけじゃまだダメ
 	if(sound118 == 0x05){
 		if(control118==4)return 4;
@@ -467,7 +480,11 @@ void board118_reset(const NP2CFG *pConfig)
 			irqval = 0x10|(1 << 6);
 			break;
 		}
-		opna_timer(&g_opna[opna_idx], irqval, NEVENT_FMTIMERA, NEVENT_FMTIMERB);
+		if(opna_idx == 1){
+			opna_timer(&g_opna[opna_idx], irqval, NEVENT_FMTIMER2A, NEVENT_FMTIMER2B);
+		}else{
+			opna_timer(&g_opna[opna_idx], irqval, NEVENT_FMTIMERA, NEVENT_FMTIMERB);
+		}
 
 		// OPLリセット
 		opl3_reset(&g_opl3, OPL3_HAS_OPL3L|OPL3_HAS_OPL3);
@@ -558,6 +575,7 @@ void board118_bind(void)
 		iocore_attachinp(cs4231.port[9], sb16_i20d2);
 		iocore_attachout(cs4231.port[9]+1, sb16_o21d2);
 		iocore_attachout(cs4231.port[9]+2, sb16_o22d2);
+		iocore_attachinp(cs4231.port[9]+2, sb16_i22d2);
 		iocore_attachout(cs4231.port[9]+3, sb16_o23d2);
 
 		if (!opl3) {

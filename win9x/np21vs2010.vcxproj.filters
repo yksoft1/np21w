@@ -8,9 +8,6 @@
     <Filter Include="ソース ファイル\bios">
       <UniqueIdentifier>{1b4ea5f2-aa56-4f87-9386-90cedfeecc8a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\cbus">
-      <UniqueIdentifier>{f9d27abb-5546-4f61-8a11-8fda1402859e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\codecnv">
       <UniqueIdentifier>{6c9fde9a-3e05-4391-b480-2c6e62b0e849}</UniqueIdentifier>
     </Filter>
@@ -40,9 +37,6 @@
     </Filter>
     <Filter Include="ソース ファイル\io">
       <UniqueIdentifier>{9d73e98b-7a0a-4020-bc6c-7aaa04a461b6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\lio">
-      <UniqueIdentifier>{7d11f730-6a89-4d86-ac7d-e77ea77f94c3}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\mem">
       <UniqueIdentifier>{01579648-5982-43cb-833c-6b7a4a7bcb08}</UniqueIdentifier>
@@ -303,6 +297,12 @@
     </Filter>
     <Filter Include="ヘッダー ファイル\io\pci">
       <UniqueIdentifier>{e9dfe4b3-4815-4ed5-8a40-70b850af9129}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\cbus">
+      <UniqueIdentifier>{f9d27abb-5546-4f61-8a11-8fda1402859e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\lio">
+      <UniqueIdentifier>{7d11f730-6a89-4d86-ac7d-e77ea77f94c3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1338,6 +1338,9 @@
     <ClCompile Include="scrnmng_d3d.cpp">
       <Filter>ソース ファイル\win9x</Filter>
     </ClCompile>
+    <ClCompile Include="..\io\pegc.c">
+      <Filter>ソース ファイル\io</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\calendar.h">
@@ -2350,6 +2353,9 @@
     </ClInclude>
     <ClInclude Include="scrnmng_d3d.h">
       <Filter>ヘッダー ファイル\win9x</Filter>
+    </ClInclude>
+    <ClInclude Include="..\io\pegc.h">
+      <Filter>ヘッダー ファイル\io</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

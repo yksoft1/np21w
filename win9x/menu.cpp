@@ -286,8 +286,8 @@ void xmenu_initialize(HMENU hMenu)
 	EnableMenuItem(hMenu, IDM_WABOPT, MF_BYCOMMAND|MFS_GRAYED);
 #endif
 	
-#ifndef SUPPORT_PHYSICAL_CDDRV
-	EnableMenuItem(hMenu, IDM_WABOPT, MF_BYCOMMAND|MFS_GRAYED);
+#ifndef SUPPORT_PCI
+	EnableMenuItem(hMenu, IDM_PCIOPT, MF_BYCOMMAND|MFS_GRAYED);
 #endif
 
 	if (np2oscfg.I286SAVE)
@@ -372,6 +372,7 @@ void xmenu_update(HMENU hMenu)
 	CheckMenuItem(hMenu, IDM_PC9801_118, MF_BYCOMMAND | MFCHECK(SOUND_SW == 0x08));
 	CheckMenuItem(hMenu, IDM_PC9801_86_WSS, MF_BYCOMMAND | MFCHECK(SOUND_SW == SOUNDID_PC_9801_86_WSS));
 	CheckMenuItem(hMenu, IDM_MATE_X_PCM, MF_BYCOMMAND | MFCHECK(SOUND_SW == SOUNDID_MATE_X_PCM));
+	CheckMenuItem(hMenu, IDM_PC9801_86_118, MF_BYCOMMAND | MFCHECK(SOUND_SW == SOUNDID_PC_9801_86_118));
 	CheckMenuItem(hMenu, IDM_SPEAKBOARD, MF_BYCOMMAND | MFCHECK(SOUND_SW == 0x20));
 	CheckMenuItem(hMenu, IDM_SPARKBOARD, MF_BYCOMMAND | MFCHECK(SOUND_SW == 0x40));
 #if defined(SUPPORT_SOUND_SB16)
@@ -388,7 +389,7 @@ void xmenu_update(HMENU hMenu)
 	CheckMenuItem(hMenu, IDM_SEEKSND, MF_BYCOMMAND | MFCHECK(np2cfg.MOTOR));
 
 	// Device-Memory
-	const UINT8 EXTMEM = np2cfg.EXTMEM;
+	const UINT16 EXTMEM = np2cfg.EXTMEM;
 	CheckMenuItem(hMenu, IDM_MEM640, MF_BYCOMMAND | MFCHECK(EXTMEM == 0));
 	CheckMenuItem(hMenu, IDM_MEM16,  MF_BYCOMMAND | MFCHECK(EXTMEM == 1));
 	CheckMenuItem(hMenu, IDM_MEM36,  MF_BYCOMMAND | MFCHECK(EXTMEM == 3));
@@ -456,4 +457,25 @@ void xmenu_update(HMENU hMenu)
 	CheckMenuItem(hMenu, IDM_ITFWORK, MF_BYCOMMAND | MFCHECK(np2cfg.ITF_WORK));
 	CheckMenuItem(hMenu, IDM_TIMERFIX, MF_BYCOMMAND | MFCHECK(np2cfg.timerfix));
 	CheckMenuItem(hMenu, IDM_SKIP16MEMCHK, MF_BYCOMMAND | MFCHECK(np2cfg.memchkmx != 0));
+#if defined(SUPPORT_FAST_MEMORYCHECK)
+	CheckMenuItem(hMenu, IDM_FASTMEMCHK, MF_BYCOMMAND | MFCHECK(np2cfg.memcheckspeed != 1));
+#endif
+	
+#if !defined(USE_FPU)
+	EnableMenuItem(hMenu, IDM_FPU80, MF_GRAYED);
+	EnableMenuItem(hMenu, IDM_FPU64, MF_GRAYED);
+	EnableMenuItem(hMenu, IDM_FPU64INT, MF_GRAYED);
+#endif
+#if !defined(SUPPORT_NET)
+	EnableMenuItem(hMenu, IDM_NETOPT, MF_GRAYED);
+#endif
+#if !defined(SUPPORT_WAB)
+	EnableMenuItem(hMenu, IDM_WABOPT, MF_GRAYED);
+#endif
+#if !defined(SUPPORT_PCI)
+	EnableMenuItem(hMenu, IDM_PCIOPT, MF_GRAYED);
+#endif
+#if !defined(SUPPORT_HOSTDRV)
+	EnableMenuItem(hMenu, IDM_HOSTDRVOPT, MF_GRAYED);
+#endif
 }

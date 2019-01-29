@@ -125,6 +125,7 @@
 #define IDC_GRCG2                       13306
 #define IDC_EGC                         13307
 #define IDC_PC980124                    13308
+#define IDC_PEGC                        13309
 #define IDC_TRAMWAIT                    13401
 #define IDC_TRAMSTR                     13402
 #define IDC_VRAMWAIT                    13403
@@ -300,6 +301,7 @@
 #define IDC_AUTOIDEBIOS					19109
 #define IDC_USEASYNCCD					19110
 #define IDC_ALLOWCDTRAYOP				19111
+#define IDC_USECDECC					19112
 #define IDS_APP_NAME2                   30001
 #define IDS_APP_NAME21                  30002
 #define IDS_FILENAME_HELP               30003
@@ -410,7 +412,14 @@
 #define IDS_GD5430_WAB                  30610
 #define IDS_GD5430_WSN_A2F              30611
 #define IDS_GD5430_WSN                  30612
-#define IDS_GD5430_GA98NB               30620
+#define IDS_GD5430_GA98NBIC             30620
+#define IDS_GD5430_GA98NBII             30621
+#define IDS_GD5430_GA98NBIV             30622
+#define IDS_GD5430_AUTO_XE_G1_PCI       30690
+#define IDS_GD5430_AUTO_XE_G2_PCI       30691
+#define IDS_GD5430_AUTO_XE_G4_PCI       30692
+#define IDS_GD5430_AUTO_XE_WA_PCI       30693
+#define IDS_GD5430_AUTO_XE_W4_PCI       30694
 #define IDS_GD5430_AUTO_XE_WS_PCI       30695
 #define IDS_GD5430_96                   30696
 #define IDS_GD5430_AUTO_XE10_WABS       30697
@@ -667,6 +676,7 @@
 #define IDM_PC9801_86_WSS               40657
 #define IDM_MATE_X_PCM                  40658
 #define IDM_SB16                        40659
+#define IDM_PC9801_86_118               49650
 #define IDM_MEM640                      40661
 #define IDM_MEM16                       40662
 #define IDM_MEM36                       40663
@@ -678,9 +688,6 @@
 #define IDM_MEM646                      40669
 #define IDM_MEM1206                     40670
 #define IDM_MEM2306                     49671
-#define IDM_FPU80                       49680
-#define IDM_FPU64                       49681
-#define IDM_FPU64INT                    49682
 #define IDM_MOUSE                       40671
 #define IDM_SERIAL1                     40672
 #define IDM_MPUPC98                     40673
@@ -690,6 +697,9 @@
 #define IDM_WABOPT                      40677
 #define IDM_HOSTDRVOPT                  40678
 #define IDM_PCIOPT                      40679
+#define IDM_FPU80                       49680
+#define IDM_FPU64                       49681
+#define IDM_FPU64INT                    49682
 #define IDM_MOUSENC                     40689
 #define IDM_MOUSERAW                    40690
 #define IDM_MOUSE30X                    40691
@@ -715,6 +725,7 @@
 #define IDM_TXTSAVE                     40715
 #define IDM_TIMERFIX                    40716
 #define IDM_SKIP16MEMCHK                40717
+#define IDM_FASTMEMCHK                  40718
 #define IDM_ALTENTER                    40721
 #define IDM_ALTF4                       40722
 #define IDM_SYSKHOOK                    40729

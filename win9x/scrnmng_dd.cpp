@@ -662,8 +662,8 @@ BRESULT scrnmngDD_create(UINT8 scrnmode) {
 			if(np2oscfg.fscrnmod & FSCRNMOD_SAMERES){
 				int maxx = GetSystemMetrics(SM_CXSCREEN);
 				int maxy = GetSystemMetrics(SM_CYSCREEN);
-				ddsd.dwWidth = (1280 > maxx ? maxx : 1280);
-				ddsd.dwHeight = (1024 > maxy ? maxy : 1024);
+				ddsd.dwWidth = (WAB_MAX_WIDTH > maxx ? maxx : WAB_MAX_WIDTH);
+				ddsd.dwHeight = (WAB_MAX_HEIGHT > maxy ? maxy : WAB_MAX_HEIGHT);
 			}else{
 				if((np2wab.relay&0x3)!=0 && np2wab.realWidth>=640 && np2wab.realHeight>=400){
 					// 実サイズに
@@ -748,8 +748,8 @@ BRESULT scrnmngDD_create(UINT8 scrnmode) {
 #ifdef SUPPORT_WAB
 		if(!np2wabwnd.multiwindow && (np2wab.relay&0x3)!=0 && np2wab.realWidth>=640 && np2wab.realHeight>=400){
 			// 実サイズに
-			width = ddsd.dwWidth = np2wab.realWidth;
-			height = ddsd.dwHeight = np2wab.realHeight;
+			width = ddsd.dwWidth = scrnstat.width;//np2wab.realWidth;
+			height = ddsd.dwHeight = scrnstat.height;//np2wab.realHeight;
 			ddsd.dwWidth++; // +1しないと駄目らしい
 		}else{
 			if (!(scrnmode & SCRNMODE_ROTATE)) {
@@ -968,6 +968,13 @@ void scrnmngDD_setextend(int extend) {
 
 void scrnmngDD_setheight(int posy, int height) {
 
+	scrnstat.height = height;
+	renewalclientsize(TRUE);
+}
+
+void scrnmngDD_setsize(int posx, int posy, int width, int height) {
+
+	scrnstat.width = width;
 	scrnstat.height = height;
 	renewalclientsize(TRUE);
 }

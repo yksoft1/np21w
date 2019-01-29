@@ -564,6 +564,20 @@ static REG8 IOINPCALL ideio_i430(UINT port) {
 
 	bank = (port >> 1) & 1;
 	ret = ideio.bank[bank];
+	if ((port >> 1) & 1) {
+		// 432h
+	}
+	else {
+		// 430h
+		IDEDEV	dev;
+		dev = getidedev();
+		//
+		// Win2000はbit6が1の時スレーブデバイスを見に行く
+		//
+		if (dev->drv[1].device != IDETYPE_NONE) {
+			ret |= 0x40;
+		}
+	}
 	ideio.bank[bank] = ret & (~0x80);
 	TRACEOUT(("ideio getbank%d %.2x [%.4x:%.8x]",
 									(port >> 1) & 1, ret, CPU_CS, CPU_EIP));
@@ -1878,6 +1892,7 @@ void ideio_reset(const NP2CFG *pConfig) {
 		CopyMemory(mem + 0xd8000, idebios, sizeof(idebios));
 		TRACEOUT(("use simulate ide.rom"));
 	}
+	CPU_RAM_D000 &= ~(0x3 << 8);
 
 	//if(ideio.bios==IDETC_NOBIOS){
 	//	UINT16 param_2[] = {0x0598, 0x05b1, 0x058c, 0x058e};

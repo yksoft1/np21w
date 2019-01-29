@@ -96,6 +96,8 @@
 #include "Dbt.h"
 #endif
 
+#include	<process.h>
+
 #ifdef BETA_RELEASE
 #define		OPENING_WAIT		1500
 #endif
@@ -130,7 +132,7 @@ static	TCHAR		szClassName[] = _T("NP2-MainWindow");
 #if !defined(_WIN64)
 						0,
 #endif
-						0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+						0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0,
 						FSCRNMOD_SAMEBPP | FSCRNMOD_SAMERES | FSCRNMOD_ASPECTFIX8,
 
 #if defined(SUPPORT_SCRN_DIRECT3D)
@@ -146,8 +148,7 @@ static	TCHAR		szClassName[] = _T("NP2-MainWindow");
 						0, 0, 1, 0, 1, 1, 
 						0, 0, 
 						0, 8, 
-						0, 
-						0, 
+						0, 0, 0, TCMODE_DEFAULT, 0, 1, 
 						0
 					};
 
@@ -190,22 +191,88 @@ static int WM_QueryCancelAutoPlay;
 
 // システムキーフック用
 #ifdef HOOK_SYSKEY
+static HANDLE	np2_hThreadKeyHook = NULL; // キーフック用スレッド
+static int		np2_hThreadKeyHookexit = 0; // スレッド終了フラグ
+static HWND		np2_hThreadKeyHookhWnd = 0;
 LRESULT CALLBACK LowLevelKeyboardProc(INT nCode, WPARAM wParam, LPARAM lParam);
 HHOOK hHook = NULL;
-static void start_hook_systemey()
+LRESULT CALLBACK np2_ThreadFuncKeyHook_WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam){
+	switch(msg){
+	case WM_CLOSE:
+		if(!np2_hThreadKeyHookexit) return 0;
+		break;
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		return 0;
+	}
+	return DefWindowProc(hWnd, msg, wParam, lParam);
+}
+static unsigned int __stdcall np2_ThreadFuncKeyHook(LPVOID vdParam) 
 {
+	MSG msg;
+	LPCTSTR wndclassname = _T("NP2 Key Hook");
+
+	WNDCLASSEX wcex ={sizeof(WNDCLASSEX), CS_HREDRAW | CS_VREDRAW, np2_ThreadFuncKeyHook_WndProc, 0, 0, g_hInstance, NULL, NULL, (HBRUSH)(COLOR_WINDOW), NULL, wndclassname, NULL};
+
+	if(!RegisterClassEx(&wcex)) return 0;
+
+	if(!(np2_hThreadKeyHookhWnd = CreateWindow(wndclassname, _T("NP2 Key Hook"), WS_POPUPWINDOW, CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, g_hInstance, NULL))) return 0;
+
+	ShowWindow( np2_hThreadKeyHookhWnd, SW_HIDE ); // 念のため
+
 	if(!hHook){
 		hHook = SetWindowsHookEx(WH_KEYBOARD_LL, LowLevelKeyboardProc, g_hInstance, 0);
 	}
-}
-static void stop_hook_systemey()
-{
+	// メイン メッセージ ループ
+	while( GetMessage(&msg, NULL, 0, 0) > 0 ) {
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
 	if(hHook){
 		UnhookWindowsHookEx(hHook);
 		hHook = NULL;
 	}
+	np2_hThreadKeyHookhWnd = NULL;
+	np2_hThreadKeyHook = NULL;
+	UnregisterClass(wndclassname, g_hInstance);
+	return 0;
+}
+static void start_hook_systemkey()
+{
+	unsigned int dwID;
+	if(!np2_hThreadKeyHook){
+		np2_hThreadKeyHook = (HANDLE)_beginthreadex(NULL, 0, np2_ThreadFuncKeyHook, NULL, 0, &dwID);
+	}
+	//if(!hHook){
+	//	hHook = SetWindowsHookEx(WH_KEYBOARD_LL, LowLevelKeyboardProc, g_hInstance, 0);
+	//}
+}
+static void stop_hook_systemkey()
+{
+	if(np2_hThreadKeyHook && np2_hThreadKeyHookhWnd){
+		np2_hThreadKeyHookexit = 1;
+		SendMessage(np2_hThreadKeyHookhWnd , WM_CLOSE , 0 , 0);
+		WaitForSingleObject(np2_hThreadKeyHook,  INFINITE);
+		np2_hThreadKeyHook = NULL;
+		np2_hThreadKeyHookexit = 0;
+	}
+	//if(hHook){
+	//	UnhookWindowsHookEx(hHook);
+	//	hHook = NULL;
+	//}
 }
 #endif
+
+// タイトルバーの音量・マウス速度 自動非表示用
+#define TMRSYSMNG_ID	9898 // 他と被らないようにすること
+UINT_PTR tmrSysMngHide = 0;
+VOID CALLBACK SysMngHideTimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime) {
+	sys_miscinfo.showvolume = 0;
+	sys_miscinfo.showmousespeed = 0;
+	sysmng_updatecaption(SYS_UPDATECAPTION_MISC);
+	KillTimer(hwnd , tmrSysMngHide);
+	tmrSysMngHide = 0;
+}
 
 
 // ----
@@ -488,7 +555,7 @@ static int flagload(HWND hWnd, const OEMCHAR *ext, LPCTSTR title, BOOL force)
 		toolwin_setfdd(1, fdd_diskname(1));
 	}
 	sysmng_workclockreset();
-	sysmng_updatecaption(1);
+	sysmng_updatecaption(SYS_UPDATECAPTION_FDD);
 	winuileave();
 	return nID;
 }
@@ -509,6 +576,7 @@ static void OpenSoundDevice(HWND hWnd)
 		pSoundMng->SetPCMVolume(SOUND_PCMSEEK, np2cfg.MOTORVOL);
 		pSoundMng->SetPCMVolume(SOUND_PCMSEEK1, np2cfg.MOTORVOL);
 		pSoundMng->SetPCMVolume(SOUND_RELAY1, np2cfg.MOTORVOL);
+		pSoundMng->SetMasterVolume(np2cfg.vol_master);
 	}
 }
 
@@ -654,16 +722,16 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 					OpenSoundDevice(hWnd);
 				}
 #ifdef HOOK_SYSKEY
-				stop_hook_systemey();
+				stop_hook_systemkey();
 #endif
 				pccore_cfgupdate();
 				pccore_reset();
-				sysmng_updatecaption(1);
+				sysmng_updatecaption(SYS_UPDATECAPTION_FDD);
 #ifdef SUPPORT_PHYSICAL_CDDRV
 				np2updatemenu();
 #endif
 #ifdef HOOK_SYSKEY
-				start_hook_systemey();
+				start_hook_systemkey();
 #endif
 			}
 			break;
@@ -774,24 +842,24 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			winuienter();
 			dialog_changehdd(hWnd, 0x00);
 			winuileave();
-			sysmng_updatecaption(1);
+			sysmng_updatecaption(SYS_UPDATECAPTION_FDD);
 			break;
 
 		case IDM_IDE0EJECT:
 			diskdrv_setsxsi(0x00, NULL);
-			sysmng_updatecaption(1);
+			sysmng_updatecaption(SYS_UPDATECAPTION_FDD);
 			break;
 
 		case IDM_IDE1OPEN:
 			winuienter();
 			dialog_changehdd(hWnd, 0x01);
 			winuileave();
-			sysmng_updatecaption(1);
+			sysmng_updatecaption(SYS_UPDATECAPTION_FDD);
 			break;
 
 		case IDM_IDE1EJECT:
 			diskdrv_setsxsi(0x01, NULL);
-			sysmng_updatecaption(1);
+			sysmng_updatecaption(SYS_UPDATECAPTION_FDD);
 			break;
 
 #if defined(SUPPORT_IDEIO)
@@ -799,31 +867,31 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			winuienter();
 			dialog_changehdd(hWnd, 0x02);
 			winuileave();
-			sysmng_updatecaption(1);
+			sysmng_updatecaption(SYS_UPDATECAPTION_FDD);
 			break;
 
 		case IDM_IDE2EJECT:
 			diskdrv_setsxsi(0x02, NULL);
-			sysmng_updatecaption(1);
+			sysmng_updatecaption(SYS_UPDATECAPTION_FDD);
 			break;
 			
 		case IDM_IDE3OPEN:
 			winuienter();
 			dialog_changehdd(hWnd, 0x03);
 			winuileave();
-			sysmng_updatecaption(1);
+			sysmng_updatecaption(SYS_UPDATECAPTION_FDD);
 			break;
 
 		case IDM_IDE3EJECT:
 			diskdrv_setsxsi(0x03, NULL);
-			sysmng_updatecaption(1);
+			sysmng_updatecaption(SYS_UPDATECAPTION_FDD);
 			break;
 			
 		case IDM_IDEOPT:
 			winuienter();
 			dialog_ideopt(hWnd);
 			winuileave();
-			sysmng_updatecaption(1);
+			sysmng_updatecaption(SYS_UPDATECAPTION_FDD);
 			break;
 #endif
 			
@@ -1186,6 +1254,11 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			update |= SYS_UPDATECFG | SYS_UPDATESBOARD;
 			break;
 			
+		case IDM_PC9801_86_118:
+			np2cfg.SOUND_SW = SOUNDID_PC_9801_86_118;
+			update |= SYS_UPDATECFG | SYS_UPDATESBOARD;
+			break;
+			
 		case IDM_MATE_X_PCM:
 			np2cfg.SOUND_SW = SOUNDID_MATE_X_PCM;
 			update |= SYS_UPDATECFG | SYS_UPDATESBOARD;
@@ -1351,36 +1424,43 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 		case IDM_MOUSE30X:
 			np2oscfg.mousemul = 3;
 			np2oscfg.mousediv = 1;
+			mousemng_updatespeed();
 			break;
 
 		case IDM_MOUSE20X:
 			np2oscfg.mousemul = 2;
 			np2oscfg.mousediv = 1;
+			mousemng_updatespeed();
 			break;
 
 		case IDM_MOUSE15X:
 			np2oscfg.mousemul = 3;
 			np2oscfg.mousediv = 2;
+			mousemng_updatespeed();
 			break;
 
 		case IDM_MOUSE10X:
 			np2oscfg.mousemul = 1;
 			np2oscfg.mousediv = 1;
+			mousemng_updatespeed();
 			break;
 
 		case IDM_MOUSED2X:
 			np2oscfg.mousemul = 1;
 			np2oscfg.mousediv = 2;
+			mousemng_updatespeed();
 			break;
 
 		case IDM_MOUSED3X:
 			np2oscfg.mousemul = 1;
 			np2oscfg.mousediv = 3;
+			mousemng_updatespeed();
 			break;
 
 		case IDM_MOUSED4X:
 			np2oscfg.mousemul = 1;
 			np2oscfg.mousediv = 4;
+			mousemng_updatespeed();
 			break;
 
 		case IDM_SERIAL1:
@@ -1426,7 +1506,7 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			winuienter();
 			dialog_hostdrvopt(hWnd);
 			winuileave();
-			sysmng_updatecaption(1);
+			sysmng_updatecaption(SYS_UPDATECAPTION_FDD);
 			break;
 #endif
 #if defined(SUPPORT_PCI)
@@ -1471,23 +1551,30 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			update |= SYS_UPDATECFG;
 			break;
 			
+#ifdef HOOK_SYSKEY
 		case IDM_SYSKHOOK:
 			np2oscfg.syskhook = !np2oscfg.syskhook;
+			if(np2oscfg.syskhook){
+				start_hook_systemkey();
+			}else{
+				stop_hook_systemkey();
+			}
 			update |= SYS_UPDATECFG;
 			break;
+#endif
 
 		case IDM_DISPCLOCK:
 			np2oscfg.DISPCLK ^= 1;
 			update |= SYS_UPDATECFG;
 			sysmng_workclockrenewal();
-			sysmng_updatecaption(3);
+			sysmng_updatecaption(SYS_UPDATECAPTION_CLK);
 			break;
 
 		case IDM_DISPFRAME:
 			np2oscfg.DISPCLK ^= 2;
 			update |= SYS_UPDATECFG;
 			sysmng_workclockrenewal();
-			sysmng_updatecaption(3);
+			sysmng_updatecaption(SYS_UPDATECAPTION_CLK);
 			break;
 
 		case IDM_JOYX:
@@ -1537,7 +1624,18 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			}
 			update |= SYS_UPDATECFG;
 			break;
-
+			
+		case IDM_FASTMEMCHK:
+#if defined(SUPPORT_FAST_MEMORYCHECK)
+			if(np2cfg.memcheckspeed==1){
+				np2cfg.memcheckspeed = 8;
+			}else{
+				np2cfg.memcheckspeed = 1;
+			}
+			update |= SYS_UPDATECFG;
+#endif
+			break;
+			
 		case IDM_RESTOREBORDER:
 			if(np2oscfg.wintype!=0){
 				WINLOCEX	wlex;
@@ -1759,11 +1857,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 					//	Shiftキーが押下されていればリセット
 					pccore_cfgupdate();
 #ifdef HOOK_SYSKEY
-					stop_hook_systemey();
+					stop_hook_systemkey();
 #endif
 					pccore_reset();
 #ifdef HOOK_SYSKEY
-					start_hook_systemey();
+					start_hook_systemkey();
 #endif
 				}
 			}
@@ -2108,8 +2206,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				}
 			}/*else*/{
 				if(np2oscfg.mouse_nc/* && !scrnmng_isfullscreen()*/){
+					static int mousebufX = 0; // マウス移動バッファ(X)
+					static int mousebufY = 0; // マウス移動バッファ(Y)
 					int x = LOWORD(lParam);
 					int y = HIWORD(lParam);
+
 					SINT16 dx, dy;
 					UINT8 btn;
 					btn = mousemng_getstat(&dx, &dy, 0);
@@ -2125,8 +2226,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 						GetClientRect(hWnd, &r);
 						mouse_edge_sh_x = (r.right-r.left)/8;
 						mouse_edge_sh_y = (r.bottom-r.top)/8;
-						dx += (x-lastmx);
-						dy += (y-lastmy);
+						mousebufX += ((x-lastmx)*np2oscfg.mousemul);
+						mousebufY += ((y-lastmy)*np2oscfg.mousemul);
+						if(mousebufX >= np2oscfg.mousediv || mousebufX <= -np2oscfg.mousediv){
+							dx += (SINT16)(mousebufX / np2oscfg.mousediv);
+							mousebufX   = mousebufX % np2oscfg.mousediv;
+						}
+						if(mousebufY >= np2oscfg.mousediv || mousebufY <= -np2oscfg.mousediv){
+							dy += (SINT16)(mousebufY / np2oscfg.mousediv);
+							mousebufY   = mousebufY % np2oscfg.mousediv;
+						}
 						// XXX: 端実験
 #define MOUSE_EDGE_ACM	4
 						if(x<mouse_edge_sh_x && dx < 0){
@@ -2306,6 +2415,63 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			}
 			break;
 
+		case WM_MOUSEWHEEL:
+			if(np2oscfg.usewheel){
+				if ((wParam & (MK_CONTROL|MK_SHIFT)) == (MK_CONTROL|MK_SHIFT)) {
+					int mmul = np2oscfg.mousemul;
+					int mdiv = np2oscfg.mousediv;
+					// 面倒なので x/2にする
+					if(mdiv == 1) {
+						mdiv *= 2;
+						mmul *= 2;
+					}
+					if(GET_WHEEL_DELTA_WPARAM(wParam) > 0){
+						if(mdiv <= 2){
+							mdiv = 2;
+							mmul++;
+						}else{
+							mdiv--;
+						}
+					}else{
+						if(mmul <= 2){
+							mmul = 2;
+							mdiv++;
+						}else{
+							mmul--;
+						}
+					}
+					if(mmul > 8) mmul = 8;
+					if(mdiv > 8) mdiv = 8;
+					// 2で割れるなら割っておく
+					if(mdiv == 2 && mmul%2 == 0) {
+						mdiv /= 2;
+						mmul /= 2;
+					}
+					np2oscfg.mousemul = mmul;
+					np2oscfg.mousediv = mdiv;
+					mousemng_updatespeed();
+					sys_miscinfo.showmousespeed = 1;
+					sysmng_updatecaption(SYS_UPDATECAPTION_MISC);
+					tmrSysMngHide = SetTimer(hWnd, TMRSYSMNG_ID, 5000, SysMngHideTimerProc);
+				}else{
+					if(np2oscfg.usemastervolume){
+						int cMaster = np2cfg.vol_master;
+						cMaster += GET_WHEEL_DELTA_WPARAM(wParam) / WHEEL_DELTA * 2;
+						if(cMaster < 0) cMaster = 0;
+						if(cMaster > 100) cMaster = 100;
+						if (np2cfg.vol_master != cMaster)
+						{
+							np2cfg.vol_master = cMaster;
+							soundmng_setvolume(cMaster);
+						}
+						sys_miscinfo.showvolume = 1;
+						sysmng_updatecaption(SYS_UPDATECAPTION_MISC);
+						tmrSysMngHide = SetTimer(hWnd, TMRSYSMNG_ID, 5000, SysMngHideTimerProc);
+					}
+				}
+			}
+			break;
+
 		case WM_CLOSE:
 			b = FALSE;
 			if (!np2oscfg.comfirm) {
@@ -2347,11 +2513,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				case NP2CMD_RESET:
 					pccore_cfgupdate();
 #ifdef HOOK_SYSKEY
-					stop_hook_systemey();
+					stop_hook_systemkey();
 #endif
 					pccore_reset();
 #ifdef HOOK_SYSKEY
-					start_hook_systemey();
+					start_hook_systemkey();
 #endif
 					break;
 			}
@@ -2636,7 +2802,7 @@ static void framereset(UINT cnt) {
 	CDebugUtyView::AllUpdate(false);
 	if (np2oscfg.DISPCLK & 3) {
 		if (sysmng_workclockrenewal()) {
-			sysmng_updatecaption(3);
+			sysmng_updatecaption(SYS_UPDATECAPTION_CLK);
 		}
 	}
 }
@@ -2736,7 +2902,7 @@ void loadNP2INI(const OEMCHAR *fname){
 #endif
 	
 #ifdef HOOK_SYSKEY
-	stop_hook_systemey();
+	stop_hook_systemkey();
 #endif
 
 	LPTSTR lpFilenameBuf = (LPTSTR)malloc((_tcslen(fname)+1)*sizeof(TCHAR));
@@ -2894,7 +3060,8 @@ void loadNP2INI(const OEMCHAR *fname){
 #ifdef SUPPORT_PHYSICAL_CDDRV
 	np2updatemenu();
 #endif
-
+	
+	SetTickCounterMode(np2oscfg.tickmode);
 	pccore_reset();
 
 	// れじうむ
@@ -2984,10 +3151,10 @@ void loadNP2INI(const OEMCHAR *fname){
 	np2opening = 0;
 
 	sysmng_workclockreset();
-	sysmng_updatecaption(3);
+	sysmng_updatecaption(SYS_UPDATECAPTION_ALL);
 	
 #ifdef HOOK_SYSKEY
-	start_hook_systemey();
+	start_hook_systemkey();
 #endif
 }
 
@@ -3220,6 +3387,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	np2updatemenu();
 #endif
 
+	SetTickCounterMode(np2oscfg.tickmode);
 	pccore_reset();
 
 	// れじうむ
@@ -3297,10 +3465,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	}
 
 	sysmng_workclockreset();
-	sysmng_updatecaption(3);
+	sysmng_updatecaption(SYS_UPDATECAPTION_ALL);
 	
 #ifdef HOOK_SYSKEY
-	start_hook_systemey();
+	start_hook_systemkey();
 #endif
 
 	lateframecount = 0;
@@ -3391,7 +3559,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	}
 	
 #ifdef HOOK_SYSKEY
-	stop_hook_systemey();
+	stop_hook_systemkey();
 #endif
 
 	// 画面表示倍率を保存
