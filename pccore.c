@@ -91,6 +91,9 @@ const OEMCHAR np2version[] = OEMTEXT(NP2VER_CORE);
 				{0x3e, 0x73, 0x7b}, 0,
 				0, 0, {1, 1, 6, 1, 8, 1},
 				128, 0x00, 1, 
+#if defined(SUPPORT_ASYNC_CPU)
+				0,
+#endif
 
 				OEMTEXT("VX"), PCBASECLOCK25, PCBASEMULTIPLE, 1,
 				{0x48, 0x05, 0x04, 0x00, 0x01, 0x00, 0x00, 0x6e},
@@ -898,11 +901,6 @@ void pccore_exec(BOOL draw) {
 
 //	nevent_get1stevent();
 	
-//#if defined(SUPPORT_HRTIMER)
-//	disptmr = hrtimertime_hl;
-//#endif
-	//disptmr = 0;
-
 	while(pcstat.screendispflag) {
 		//lastclock = CPU_REMCLOCK;
 #if defined(TRACE)
@@ -969,13 +967,6 @@ void pccore_exec(BOOL draw) {
 				hrtimertimeuint = ((hrtimertimeuint & ~0x3fffff) + 0x400000) & 0xffffff; // 日付変わった
 			}
 			STOREINTELDWORD(mem+0x04F1, hrtimertimeuint); // XXX: 04F4にも書いちゃってるけど差し当たっては問題なさそうなので･･･
-
-			//disptmr++;
-			//if(disptmr > 64){
-			//	// XXX: 数秒もこの中にいるのは変なので抜けさせる（操作を受け付けなくなる現象の暫定回避）
-			//	pcstat.screendispflag = 0;
-			//	nevent_set(NEVENT_FLAMES, 0, screenvsync, NEVENT_RELATIVE);
-			//}
 		}
 #endif
 		nevent_progress();
