@@ -407,6 +407,10 @@ static const INITBL iniitem[] = {
 	{"winNTfix", INITYPE_BOOL,		&np2cfg.winntfix, 0},
 	{"memchkmx", INITYPE_UINT8,		&np2cfg.memchkmx, 0},
 	{"usePEGCPlane", INITYPE_BOOL,		&np2cfg.usepegcplane, 0},
+
+#if defined(SUPPORT_ASYNC_CPU)
+	{"ASYNCCPU", INITYPE_BOOL,	&np2cfg.asynccpu,	0},
+#endif
 	
 	//for NP2kai keyboard
 	{"keyboard", INITYPE_KB,		&np2oscfg.KEYBOARD,	0}
