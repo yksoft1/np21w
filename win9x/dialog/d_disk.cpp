@@ -185,7 +185,7 @@ void dialog_changehdd(HWND hWnd, REG8 drv)
 			seppos = seppostmp + 1;
 			sepcount++;
 		}
-		if(rFilter.back()!='|'){
+		if(*rFilter.rbegin()!='|'){
 			sepcount++; // ––”ö‚ª|‚Å‚È‚¯‚ê‚Î‚ ‚é‚à‚Ì‚Æ‚·‚é
 		}
 		if((sepcount / 2) - 1 > 0){

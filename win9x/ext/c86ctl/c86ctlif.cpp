@@ -231,7 +231,7 @@ void C86CtlIf::Detach(C86CtlIf::Chip* pChip)
 	{
 		if (it->second == pChip)
 		{
-			it = m_chips.erase(it);
+			/*it =*/ m_chips.erase(it);
 		}
 		else
 		{
