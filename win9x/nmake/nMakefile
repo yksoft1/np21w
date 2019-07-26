@@ -426,4 +426,4 @@ clean:
 	del $(OBJS_IA32)
 	del $(OBJS_W9X)
 	del $(OBJS_Z)
-	del *.lib *.exp
+	del *.manifest
