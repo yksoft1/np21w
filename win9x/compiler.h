@@ -213,12 +213,12 @@ typedef	signed __int64		SINT64;
 
 #define SOUND_CRITICAL
 #define	SOUNDRESERVE	20
-#ifndef __MINGW32__
+#if !defined (__MINGW32__) && !defined (NMAKE)
 #define SUPPORT_VSTi
 #define SUPPORT_ASIO
 #define	VERMOUTH_LIB
 #endif
-#if (_MSC_VER >= 1500)
+#if (_MSC_VER >= 1500) && !defined (NMAKE)
 #define SUPPORT_WASAPI
 #endif	/* (_MSC_VER >= 1500) */
 

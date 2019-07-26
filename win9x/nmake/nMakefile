@@ -1,0 +1,429 @@
+CC		=	cl
+CXX		=   cl
+LD		= 	link
+LIBR	=	lib
+WINDRES =	rc
+
+NP2_PATH	= ..\..
+
+CFLAGS =  	-nologo -O2 -MT -EHsc -DNDEBUG -DWIN32 -D__WIN32__ -DNMAKE -D_FILE_OFFSET_BITS=64 \
+			-DSUPPORT_PC9821 -DSUPPORT_PEGC -DUSE_FPU -DSUPPORT_FPU_DOSBOX -DSUPPORT_FPU_DOSBOX2 -DSUPPORT_FPU_SOFTFLOAT \
+			-DSUPPORT_GPIB -DUSE_MMX -DUSE_3DNOW -DUSE_SSE -DUSE_SSE2 -DUSE_SSE3 -DUSE_TSC \
+			-DSUPPORT_PCI -DSUPPORT_WAB -DSUPPORT_CL_GD5430 -DSUPPORT_NET -DSUPPORT_LGY98 \
+			-DUSE_MAME -DSUPPORT_FMGEN -DSUPPORT_SOUND_SB16 \
+			-D_WINDOWS -DUSE_FASTPAGING -DUSE_VME -DBIOS_IO_EMULATION \
+			-DSUPPORT_LARGE_HDD -DSUPPORT_VPCVHD -DSUPPORT_KAI_IMAGES -DSUPPORT_IDEIO \
+			-DSUPPORT_SCRN_DIRECT3D -DSUPPORT_FAST_MEMORYCHECK -DSUPPORT_ASYNC_CPU \
+			-DSUPPORT_NP2_THREAD -DNP2_THREAD_WIN -DGIT_VERSION=\"\" \
+			-D_WIN32_WINNT=0x0501 \
+			-I. -I.. \
+			-I$(NP2_PATH) \
+			-I$(NP2_PATH)/codecnv \
+			-I$(NP2_PATH)/common \
+			-I$(NP2_PATH)/i386c \
+			-I$(NP2_PATH)/i386c/ia32 \
+			-I$(NP2_PATH)/i386c/ia32/instructions \
+			-I$(NP2_PATH)/i386c/ia32/instructions/fpu \
+			-I$(NP2_PATH)/mem \
+			-I$(NP2_PATH)/io \
+			-I$(NP2_PATH)/io/pci \
+			-I$(NP2_PATH)/fdd \
+			-I$(NP2_PATH)/cbus \
+			-I$(NP2_PATH)/network \
+			-I$(NP2_PATH)/sound \
+			-I$(NP2_PATH)/vram \
+			-I$(NP2_PATH)/wab \
+			-I$(NP2_PATH)/generic \
+			-I$(NP2_PATH)/zlib \
+			-I$(NP2_PATH)/win9x/x86 \
+			-I$(NP2_PATH)/win9x/dialog \
+			-I$(NP2_PATH)/win9x/misc \
+			-I$(NP2_PATH)/win9x/subwnd \
+			-I$(NP2_PATH)/win9x/ext \
+			-I$(NP2_PATH)/win9x/ext/c86cpl \
+			-I$(NP2_PATH)/win9x/ext/romeo \
+			-I$(NP2_PATH)/win9x/ext/scci 
+
+CXXFLAGS =  $(CFLAGS)
+
+LFLAGS	=	-nologo -SUBSYSTEM:Windows,"5.01"
+
+TARGET	=	np21ww.exe
+
+OBJS	=	$(NP2_PATH)\calendar.obj \
+			$(NP2_PATH)\debugsub386.obj \
+			$(NP2_PATH)\keystat.obj \
+			$(NP2_PATH)\nevent.obj \
+			$(NP2_PATH)\pccore.obj \
+			$(NP2_PATH)\statsave.obj \
+			$(NP2_PATH)\timing.obj \
+			$(NP2_PATH)\bios\bios.obj \
+			$(NP2_PATH)\bios\bios09.obj \
+			$(NP2_PATH)\bios\bios0c.obj \
+			$(NP2_PATH)\bios\bios12.obj \
+			$(NP2_PATH)\bios\bios13.obj \
+			$(NP2_PATH)\bios\bios18.obj \
+			$(NP2_PATH)\bios\bios19.obj \
+			$(NP2_PATH)\bios\bios1a.obj \
+			$(NP2_PATH)\bios\bios1b.obj \
+			$(NP2_PATH)\bios\bios1c.obj \
+			$(NP2_PATH)\bios\bios1f.obj \
+			$(NP2_PATH)\bios\sxsibios.obj \
+			$(NP2_PATH)\cbus\amd98.obj \
+			$(NP2_PATH)\cbus\atapicmd.obj \
+			$(NP2_PATH)\cbus\board118.obj \
+			$(NP2_PATH)\cbus\board14.obj \
+			$(NP2_PATH)\cbus\board26k.obj \
+			$(NP2_PATH)\cbus\board86.obj \
+			$(NP2_PATH)\cbus\boardpx.obj \
+			$(NP2_PATH)\cbus\boardsb16.obj \
+			$(NP2_PATH)\cbus\boardso.obj \
+			$(NP2_PATH)\cbus\boardspb.obj \
+			$(NP2_PATH)\cbus\boardx2.obj \
+			$(NP2_PATH)\cbus\cbuscore.obj \
+			$(NP2_PATH)\cbus\cs4231io.obj \
+			$(NP2_PATH)\cbus\ct1741io.obj \
+			$(NP2_PATH)\cbus\ct1745io.obj \
+			$(NP2_PATH)\cbus\gpibio.obj \
+			$(NP2_PATH)\cbus\ideio.obj \
+			$(NP2_PATH)\cbus\mpu98ii.obj \
+			$(NP2_PATH)\cbus\pc9861k.obj \
+			$(NP2_PATH)\cbus\pcm86io.obj \
+			$(NP2_PATH)\cbus\sasiio.obj \
+			$(NP2_PATH)\cbus\scsicmd.obj \
+			$(NP2_PATH)\cbus\scsiio.obj \
+			$(NP2_PATH)\codecnv\tcswap16.obj \
+			$(NP2_PATH)\codecnv\ucs2utf8.obj \
+			$(NP2_PATH)\codecnv\utf8ucs2.obj \
+			$(NP2_PATH)\diskimage\cddfile.obj \
+			$(NP2_PATH)\diskimage\fddfile.obj \
+			$(NP2_PATH)\diskimage\img_strres.obj \
+			$(NP2_PATH)\diskimage\fd\fdd_bkdsk.obj \
+			$(NP2_PATH)\diskimage\fd\fdd_d88.obj \
+			$(NP2_PATH)\diskimage\fd\fdd_dcp.obj \
+			$(NP2_PATH)\diskimage\fd\fdd_nfd.obj \
+			$(NP2_PATH)\diskimage\fd\fdd_vfdd.obj \
+			$(NP2_PATH)\diskimage\fd\fdd_xdf.obj \
+			$(NP2_PATH)\diskimage\cd\cdd_ccd.obj \
+			$(NP2_PATH)\diskimage\cd\cdd_cue.obj \
+			$(NP2_PATH)\diskimage\cd\cdd_iso.obj \
+			$(NP2_PATH)\diskimage\cd\cdd_mds.obj \
+			$(NP2_PATH)\diskimage\cd\cdd_nrg.obj \
+			$(NP2_PATH)\diskimage\cd\cdd_real.obj \
+			$(NP2_PATH)\fdd\diskdrv.obj \
+			$(NP2_PATH)\fdd\fdd_mtr.obj \
+			$(NP2_PATH)\fdd\newdisk.obj \
+			$(NP2_PATH)\fdd\sxsi.obj \
+			$(NP2_PATH)\fdd\sxsicd.obj \
+			$(NP2_PATH)\fdd\sxsihdd.obj \
+			$(NP2_PATH)\fdd\sxsihdd_nvl.obj \
+			$(NP2_PATH)\font\font.obj \
+			$(NP2_PATH)\font\fontdata.obj \
+			$(NP2_PATH)\font\fontfm7.obj \
+			$(NP2_PATH)\font\fontmake.obj \
+			$(NP2_PATH)\font\fontpc88.obj \
+			$(NP2_PATH)\font\fontpc98.obj \
+			$(NP2_PATH)\font\fontv98.obj \
+			$(NP2_PATH)\font\fontx1.obj \
+			$(NP2_PATH)\font\fontx68k.obj \
+			$(NP2_PATH)\generic\cmjasts.obj \
+			$(NP2_PATH)\generic\cmndraw.obj \
+			$(NP2_PATH)\generic\cmver.obj \
+			$(NP2_PATH)\generic\dipswbmp.obj \
+			$(NP2_PATH)\generic\hostdrv.obj \
+			$(NP2_PATH)\generic\hostdrvs.obj \
+			$(NP2_PATH)\generic\keydisp.obj \
+			$(NP2_PATH)\generic\memdbg32.obj \
+			$(NP2_PATH)\generic\np2info.obj \
+			$(NP2_PATH)\generic\softkbd.obj \
+			$(NP2_PATH)\generic\unasm.obj \
+			$(NP2_PATH)\io\artic.obj \
+			$(NP2_PATH)\io\cgrom.obj \
+			$(NP2_PATH)\io\cpuio.obj \
+			$(NP2_PATH)\io\crtc.obj \
+			$(NP2_PATH)\io\dipsw.obj \
+			$(NP2_PATH)\io\dmac.obj \
+			$(NP2_PATH)\io\egc.obj \
+			$(NP2_PATH)\io\emsio.obj \
+			$(NP2_PATH)\io\epsonio.obj \
+			$(NP2_PATH)\io\fdc.obj \
+			$(NP2_PATH)\io\fdd320.obj \
+			$(NP2_PATH)\io\gdc.obj \
+			$(NP2_PATH)\io\gdc_pset.obj \
+			$(NP2_PATH)\io\gdc_sub.obj \
+			$(NP2_PATH)\io\iocore.obj \
+			$(NP2_PATH)\io\mouseif.obj \
+			$(NP2_PATH)\io\necio.obj \
+			$(NP2_PATH)\io\nmiio.obj \
+			$(NP2_PATH)\io\np2sysp.obj \
+			$(NP2_PATH)\io\pcidev.obj \
+			$(NP2_PATH)\io\pegc.obj \
+			$(NP2_PATH)\io\pic.obj \
+			$(NP2_PATH)\io\pit.obj \
+			$(NP2_PATH)\io\printif.obj \
+			$(NP2_PATH)\io\serial.obj \
+			$(NP2_PATH)\io\sysport.obj \
+			$(NP2_PATH)\io\upd4990.obj \
+			$(NP2_PATH)\io\pci\98graphbridge.obj \
+			$(NP2_PATH)\io\pci\cbusbridge.obj \
+			$(NP2_PATH)\lio\gcircle.obj \
+			$(NP2_PATH)\lio\gline.obj \
+			$(NP2_PATH)\lio\gpset.obj \
+			$(NP2_PATH)\lio\gput1.obj \
+			$(NP2_PATH)\lio\gscreen.obj \
+			$(NP2_PATH)\lio\lio.obj \
+			$(NP2_PATH)\mem\dmav30.obj \
+			$(NP2_PATH)\mem\dmax86.obj \
+			$(NP2_PATH)\mem\memegc.obj \
+			$(NP2_PATH)\mem\memems.obj \
+			$(NP2_PATH)\mem\memepp.obj \
+			$(NP2_PATH)\mem\memtram.obj \
+			$(NP2_PATH)\mem\memvga.obj \
+			$(NP2_PATH)\mem\memvram.obj \
+			$(NP2_PATH)\network\lgy98.obj \
+			$(NP2_PATH)\network\net.obj
+			
+OBJS2 = 	$(NP2_PATH)\sound\vermouth\midimod.obj \
+			$(NP2_PATH)\sound\vermouth\midinst.obj \
+			$(NP2_PATH)\sound\vermouth\midiout.obj \
+			$(NP2_PATH)\sound\vermouth\midtable.obj \
+			$(NP2_PATH)\sound\vermouth\midvoice.obj \
+			$(NP2_PATH)\sound\getsnd\getmp3.obj \
+			$(NP2_PATH)\sound\getsnd\getogg.obj \
+			$(NP2_PATH)\sound\getsnd\getsmix.obj \
+			$(NP2_PATH)\sound\getsnd\getsnd.obj \
+			$(NP2_PATH)\sound\getsnd\getwave.obj \
+			$(NP2_PATH)\sound\adpcmg.obj \
+			$(NP2_PATH)\sound\adpcmc.obj \
+			$(NP2_PATH)\sound\beepg.obj \
+			$(NP2_PATH)\sound\beepc.obj \
+			$(NP2_PATH)\sound\cs4231g.obj \
+			$(NP2_PATH)\sound\cs4231c.obj \
+			$(NP2_PATH)\sound\fmboard.obj \
+			$(NP2_PATH)\sound\oplgeng.obj \
+			$(NP2_PATH)\sound\oplgenc.obj \
+			$(NP2_PATH)\sound\opngeng.obj \
+			$(NP2_PATH)\sound\opngenc.obj \
+			$(NP2_PATH)\sound\opntimer.obj \
+			$(NP2_PATH)\sound\pcm86g.obj \
+			$(NP2_PATH)\sound\pcm86c.obj \
+			$(NP2_PATH)\sound\pcmmix.obj \
+			$(NP2_PATH)\sound\psggeng.obj \
+			$(NP2_PATH)\sound\psggenc.obj \
+			$(NP2_PATH)\sound\rhythmc.obj \
+			$(NP2_PATH)\sound\s98.obj \
+			$(NP2_PATH)\sound\sndcsec.obj \
+			$(NP2_PATH)\sound\sound.obj \
+			$(NP2_PATH)\sound\soundrom.obj \
+			$(NP2_PATH)\sound\tms3631c.obj \
+			$(NP2_PATH)\sound\tms3631g.obj \
+			$(NP2_PATH)\sound\mame\fmopl.obj \
+			$(NP2_PATH)\sound\mame\ymdeltat.obj \
+			$(NP2_PATH)\sound\mame\ymf262.obj \
+			$(NP2_PATH)\sound\fmgen\fmgen_file.obj \
+			$(NP2_PATH)\sound\fmgen\fmgen_fmgen.obj \
+			$(NP2_PATH)\sound\fmgen\fmgen_fmgwrap.obj \
+			$(NP2_PATH)\sound\fmgen\fmgen_fmtimer.obj \
+			$(NP2_PATH)\sound\fmgen\fmgen_opm.obj \
+			$(NP2_PATH)\sound\fmgen\fmgen_opna.obj \
+			$(NP2_PATH)\sound\fmgen\fmgen_psg.obj \
+			$(NP2_PATH)\trap\inttrap.obj \
+			$(NP2_PATH)\trap\steptrap.obj \
+			$(NP2_PATH)\vram\dispsync.obj \
+			$(NP2_PATH)\vram\makegrex.obj \
+			$(NP2_PATH)\vram\makegrph.obj \
+			$(NP2_PATH)\vram\maketext.obj \
+			$(NP2_PATH)\vram\maketgrp.obj \
+			$(NP2_PATH)\vram\palettes.obj \
+			$(NP2_PATH)\vram\scrndraw.obj \
+			$(NP2_PATH)\vram\scrnsave.obj \
+			$(NP2_PATH)\vram\sdraw.obj \
+			$(NP2_PATH)\vram\sdrawq16.obj \
+			$(NP2_PATH)\vram\vram.obj \
+			$(NP2_PATH)\common\_memory.obj \
+			$(NP2_PATH)\common\arc.obj \
+			$(NP2_PATH)\common\arcunzip.obj \
+			$(NP2_PATH)\common\bmpdata.obj \
+			$(NP2_PATH)\common\lstarray.obj \
+			$(NP2_PATH)\common\milstr.obj \
+			$(NP2_PATH)\common\mimpidef.obj \
+			$(NP2_PATH)\common\parts.obj \
+			$(NP2_PATH)\common\profile.obj \
+			$(NP2_PATH)\common\strres.obj \
+			$(NP2_PATH)\common\textfile.obj \
+			$(NP2_PATH)\common\wavefile.obj \
+			$(NP2_PATH)\wab\cirrus_vga.obj \
+			$(NP2_PATH)\wab\wab.obj
+				
+OBJS_IA32 =	$(NP2_PATH)\i386c\cpucore.obj \
+			$(NP2_PATH)\i386c\cpumem.obj \
+			$(NP2_PATH)\i386c\ia32\cpu.obj \
+			$(NP2_PATH)\i386c\ia32\cpu_io.obj \
+			$(NP2_PATH)\i386c\ia32\cpu_mem.obj \
+			$(NP2_PATH)\i386c\ia32\ctrlxfer.obj \
+			$(NP2_PATH)\i386c\ia32\debug.obj \
+			$(NP2_PATH)\i386c\ia32\disasm.obj \
+			$(NP2_PATH)\i386c\ia32\exception.obj \
+			$(NP2_PATH)\i386c\ia32\groups.obj \
+			$(NP2_PATH)\i386c\ia32\ia32.obj \
+			$(NP2_PATH)\i386c\ia32\inst_table.obj \
+			$(NP2_PATH)\i386c\ia32\interface.obj \
+			$(NP2_PATH)\i386c\ia32\paging.obj \
+			$(NP2_PATH)\i386c\ia32\resolve.obj \
+			$(NP2_PATH)\i386c\ia32\segments.obj \
+			$(NP2_PATH)\i386c\ia32\task.obj \
+			$(NP2_PATH)\i386c\ia32\instructions\bin_arith.obj \
+			$(NP2_PATH)\i386c\ia32\instructions\bit_byte.obj \
+			$(NP2_PATH)\i386c\ia32\instructions\ctrl_trans.obj \
+			$(NP2_PATH)\i386c\ia32\instructions\data_trans.obj \
+			$(NP2_PATH)\i386c\ia32\instructions\dec_arith.obj \
+			$(NP2_PATH)\i386c\ia32\instructions\flag_ctrl.obj \
+			$(NP2_PATH)\i386c\ia32\instructions\fpu.obj \
+			$(NP2_PATH)\i386c\ia32\instructions\logic_arith.obj \
+			$(NP2_PATH)\i386c\ia32\instructions\misc_inst.obj \
+			$(NP2_PATH)\i386c\ia32\instructions\seg_reg.obj \
+			$(NP2_PATH)\i386c\ia32\instructions\shift_rotate.obj \
+			$(NP2_PATH)\i386c\ia32\instructions\string_inst.obj \
+			$(NP2_PATH)\i386c\ia32\instructions\system_inst.obj \
+			$(NP2_PATH)\i386c\ia32\instructions\fpu\fpdummy.obj \
+			$(NP2_PATH)\i386c\ia32\instructions\fpu\fpemul_dosbox.obj \
+			$(NP2_PATH)\i386c\ia32\instructions\fpu\fpemul_dosbox2.obj \
+			$(NP2_PATH)\i386c\ia32\instructions\fpu\fpemul_softfloat.obj \
+			$(NP2_PATH)\i386c\ia32\instructions\fpu\softfloat\softfloat.obj \
+			$(NP2_PATH)\i386c\ia32\instructions\mmx\mmx.obj \
+			$(NP2_PATH)\i386c\ia32\instructions\mmx\3dnow.obj \
+			$(NP2_PATH)\i386c\ia32\instructions\sse\sse.obj \
+			$(NP2_PATH)\i386c\ia32\instructions\sse2\sse2.obj \
+			$(NP2_PATH)\i386c\ia32\instructions\sse3\sse3.obj
+
+OBJS_W9X =	$(NP2_PATH)\win9x\commng.obj \
+			$(NP2_PATH)\win9x\compiler.obj \
+			$(NP2_PATH)\win9x\dosio.obj \
+			$(NP2_PATH)\win9x\fontmng.obj \
+			$(NP2_PATH)\win9x\ini.obj \
+			$(NP2_PATH)\win9x\joymng.obj \
+			$(NP2_PATH)\win9x\menu.obj \
+			$(NP2_PATH)\win9x\mousemng.obj \
+			$(NP2_PATH)\win9x\np2.obj \
+			$(NP2_PATH)\win9x\np2arg.obj \
+			$(NP2_PATH)\win9x\oemtext.obj \
+			$(NP2_PATH)\win9x\recvideo.obj \
+			$(NP2_PATH)\win9x\scrnmng.obj \
+			$(NP2_PATH)\win9x\scrnmng_d3d.obj \
+			$(NP2_PATH)\win9x\scrnmng_dd.obj \
+			$(NP2_PATH)\win9x\soundmng.obj \
+			$(NP2_PATH)\win9x\sysmng.obj \
+			$(NP2_PATH)\win9x\taskmng.obj \
+			$(NP2_PATH)\win9x\timemng.obj \
+			$(NP2_PATH)\win9x\winkbd.obj \
+			$(NP2_PATH)\win9x\winloc.obj \
+			$(NP2_PATH)\win9x\dialog\c_combodata.obj \
+			$(NP2_PATH)\win9x\dialog\c_dipsw.obj \
+			$(NP2_PATH)\win9x\dialog\c_midi.obj \
+			$(NP2_PATH)\win9x\dialog\c_slidervalue.obj \
+			$(NP2_PATH)\win9x\dialog\d_about.obj \
+			$(NP2_PATH)\win9x\dialog\d_bmp.obj \
+			$(NP2_PATH)\win9x\dialog\d_cfgload.obj \
+			$(NP2_PATH)\win9x\dialog\d_cfgsave.obj \
+			$(NP2_PATH)\win9x\dialog\d_clnd.obj \
+			$(NP2_PATH)\win9x\dialog\d_config.obj \
+			$(NP2_PATH)\win9x\dialog\d_disk.obj \
+			$(NP2_PATH)\win9x\dialog\d_font.obj \
+			$(NP2_PATH)\win9x\dialog\d_hostdrv.obj \
+			$(NP2_PATH)\win9x\dialog\d_ide.obj \
+			$(NP2_PATH)\win9x\dialog\d_mpu98.obj \
+			$(NP2_PATH)\win9x\dialog\d_network.obj \
+			$(NP2_PATH)\win9x\dialog\d_pci.obj \
+			$(NP2_PATH)\win9x\dialog\d_screen.obj \
+			$(NP2_PATH)\win9x\dialog\d_serial.obj \
+			$(NP2_PATH)\win9x\dialog\d_sound.obj \
+			$(NP2_PATH)\win9x\dialog\d_soundlog.obj \
+			$(NP2_PATH)\win9x\dialog\d_txt.obj \
+			$(NP2_PATH)\win9x\dialog\d_wab.obj \
+			$(NP2_PATH)\win9x\dialog\np2class.obj \
+			$(NP2_PATH)\win9x\misc\DlgProc.obj \
+			$(NP2_PATH)\win9x\misc\extrom.obj \
+			$(NP2_PATH)\win9x\misc\PropProc.obj \
+			$(NP2_PATH)\win9x\misc\threadbase.obj \
+			$(NP2_PATH)\win9x\misc\tickcounter.obj \
+			$(NP2_PATH)\win9x\misc\trace.obj \
+			$(NP2_PATH)\win9x\misc\tstring.obj \
+			$(NP2_PATH)\win9x\misc\WndProc.obj \
+			$(NP2_PATH)\win9x\soundmng\sddsound3.obj \
+			$(NP2_PATH)\win9x\commng\cmbase.obj \
+			$(NP2_PATH)\win9x\commng\cmmidi.obj \
+			$(NP2_PATH)\win9x\commng\cmmidiin32.obj \
+			$(NP2_PATH)\win9x\commng\cmmidiout32.obj \
+			$(NP2_PATH)\win9x\commng\cmmidioutmt32sound.obj \
+			$(NP2_PATH)\win9x\commng\cmmidioutvermouth.obj \
+			$(NP2_PATH)\win9x\commng\cmmidioutvst.obj \
+			$(NP2_PATH)\win9x\commng\cmnull.obj \
+			$(NP2_PATH)\win9x\commng\cmpara.obj \
+			$(NP2_PATH)\win9x\commng\cmserial.obj \
+			$(NP2_PATH)\win9x\debuguty\view1mb.obj \
+			$(NP2_PATH)\win9x\debuguty\viewasm.obj \
+			$(NP2_PATH)\win9x\debuguty\viewer.obj \
+			$(NP2_PATH)\win9x\debuguty\viewitem.obj \
+			$(NP2_PATH)\win9x\debuguty\viewmem.obj \
+			$(NP2_PATH)\win9x\debuguty\viewreg.obj \
+			$(NP2_PATH)\win9x\debuguty\viewseg.obj \
+			$(NP2_PATH)\win9x\debuguty\viewsnd.obj \
+			$(NP2_PATH)\win9x\subwnd\dclock.obj \
+			$(NP2_PATH)\win9x\subwnd\dd2.obj \
+			$(NP2_PATH)\win9x\subwnd\kdispwnd.obj \
+			$(NP2_PATH)\win9x\subwnd\mdbgwnd.obj \
+			$(NP2_PATH)\win9x\subwnd\skbdwnd.obj \
+			$(NP2_PATH)\win9x\subwnd\subwnd.obj \
+			$(NP2_PATH)\win9x\subwnd\toolwnd.obj \
+			$(NP2_PATH)\win9x\ext\externalchipmanager.obj \
+			$(NP2_PATH)\win9x\ext\externalopl3.obj \
+			$(NP2_PATH)\win9x\ext\externalopm.obj \
+			$(NP2_PATH)\win9x\ext\externalopna.obj \
+			$(NP2_PATH)\win9x\ext\externalpsg.obj \
+			$(NP2_PATH)\win9x\ext\mt32snd.obj \
+			$(NP2_PATH)\win9x\ext\opl3.obj \
+			$(NP2_PATH)\win9x\ext\opna.obj \
+			$(NP2_PATH)\win9x\ext\c86ctl\c86ctlif.obj \
+			$(NP2_PATH)\win9x\ext\romeo\juliet.obj \
+			$(NP2_PATH)\win9x\ext\scci\scciif.obj \
+			$(NP2_PATH)\win9x\resources\1252\np2.res
+			
+OBJS_Z = 	$(NP2_PATH)\zlib\adler32.obj \
+			$(NP2_PATH)\zlib\crc32.obj \
+			$(NP2_PATH)\zlib\inffast.obj \
+			$(NP2_PATH)\zlib\inflate.obj \
+			$(NP2_PATH)\zlib\inftrees.obj \
+			$(NP2_PATH)\zlib\zutil.obj
+
+LIBS = kernel32.lib user32.lib gdi32.lib imm32.lib winmm.lib dxguid.lib shell32.lib shlwapi.lib ole32.lib comdlg32.lib opengl32.lib advapi32.lib ws2_32.lib d3d9.lib
+
+!IFDEF LTCG
+CXXFLAGS = $(CXXFLAGS) -GL
+CFLAGS = $(CFLAGS) -GL
+LFLAGS = $(LFLAGS) -LTCG
+!ENDIF
+
+.SUFFIXES: .c.o
+.SUFFIXES: .cpp.o
+
+all: $(TARGET) $(SDLMAIN)
+
+$(TARGET):	$(OBJS) $(OBJS2) $(OBJS_IA32) $(OBJS_W9X) $(OBJS_Z)
+	$(LD) $(LFLAGS) -OUT:$@ $(OBJS) $(OBJS2) $(OBJS_IA32) $(OBJS_W9X) $(OBJS_Z) $(LIBS)
+	
+.c.obj:
+	$(CC) $(CFLAGS) -c -Fo$@ $<
+
+.cpp.obj:
+	$(CXX) $(CXXFLAGS) -c -Fo$@ $<
+
+.rc.res: 
+	$(WINDRES) -fo $@ $< 
+	
+clean:
+	del $(TARGET) $(OBJS) 
+	del $(OBJS2)
+	del $(OBJS_IA32)
+	del $(OBJS_W9X)
+	del $(OBJS_Z)
+	del *.lib *.exp

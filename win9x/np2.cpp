@@ -2966,7 +2966,7 @@ void loadNP2INI(const OEMCHAR *fname){
 	szClassName[1] = (TCHAR)np2oscfg.winid[1];
 	szClassName[2] = (TCHAR)np2oscfg.winid[2];
 	
-#if !defined(_WIN64) && !defined (__MINGW32__)
+#if !defined(_WIN64) && !defined (__MINGW32__) && !defined (NMAKE)
 	mmxflag = (havemmx())?0:MMXFLAG_NOTSUPPORT;
 	mmxflag += (np2oscfg.disablemmx)?MMXFLAG_DISABLE:0;
 #endif
@@ -3269,7 +3269,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	g_hInstance = hInstance = LoadExternalResource(hInstance);
 	CWndProc::SetResourceHandle(hInstance);
 
-#if !defined(_WIN64) && !defined (__MINGW32__)
+#if !defined(_WIN64) && !defined (__MINGW32__) && !defined (NMAKE)
 	mmxflag = (havemmx())?0:MMXFLAG_NOTSUPPORT;
 	mmxflag += (np2oscfg.disablemmx)?MMXFLAG_DISABLE:0;
 #endif
